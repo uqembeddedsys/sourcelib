@@ -1,0 +1,19 @@
+# Temporary files
+*~
+*.swp
+*.swo
+*.swn
+# Build files
+.depend
+*.o
+*.a
+*.hex
+*.bin
+*.elf
+*.x
+documentation
+docs
+build
+# Previous svn files
+*.svn
+*._*

@@ -1,0 +1,67 @@
+
+LIBNP2=libnp2.a
+
+CC=arm-none-eabi-gcc
+AR=arm-none-eabi-ar
+OBJCOPY=arm-none-eabi-objcopy
+
+# note: cpu flags are required for both compile and link
+CPUFLAGS = -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb-interwork
+CPUFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+
+LDFLAGS = $(CPUFLAGS) -T$(NP2_PATH)/STM32F405VGTx_FLASH.ld
+
+CFLAGS  += -g -O1 -Wmaybe-uninitialized -Wextra -std=gnu99 -Wsign-compare
+CFLAGS += $(CPUFLAGS)
+#CFLAGS += -DUSE_STDPERIPH_DRIVER -DUSE_STM324xG_EVAL
+
+LD_SYS_LIBS = -lm -lc -lgcc -lnosys
+
+STARTUP = $(NP2_PATH)/startup_stm32f405xx.s # add startup file to build
+
+###################################################
+# LIBRARY SOURCES
+
+NP2_PATH=$(NP2_ROOT)/src/boards/netduinoplus2
+VCP_PATH=$(NP2_ROOT)/src/boards/netduinoplus2/usb/vcp
+USBCORE_PATH=$(NP2_ROOT)/src/Libraries/STM32_USB_Device_Library/Core
+USBCDC_PATH=$(NP2_ROOT)/src/Libraries/STM32_USB_Device_Library/Class/CDC
+STDPERPH_PATH=$(NP2_ROOT)/src/Libraries/stm32f4xx_periph
+COMMON_PATH=$(NP2_ROOT)/src/Libraries/common
+CMSIS_PATH=$(NP2_ROOT)/src/Libraries/cmsis
+FREERTOS_PATH=$(NP2_ROOT)/src/FreeRTOS
+
+CFLAGS += -I$(USBCORE_PATH)/Inc -I$(USBCDC_PATH)/Inc -I$(VCP_PATH)/inc -I.
+CFLAGS += -I$(CMSIS_PATH) -I$(NP2_PATH)/inc -I$(STDPERPH_PATH)/inc
+CFLAGS += -I$(COMMON_PATH) -DSTM32F405xx
+CFLAGS += -I$(FREERTOS_PATH)/include -I$(FREERTOS_PATH)/portable/GCC/ARM_CM4F
+CFLAGS += -I$(RUNMON_PATH)/
+
+# Use USB serial port
+CFLAGS += -DENABLE_VCP #Enable USB VCP for debug_printf
+#CFLAGS += -DENABLE_DEBUG_UART  #Enable UART4 for debug printf
+
+
+LIBSRCS = $(wildcard $(STDPERPH_PATH)/src/*.c) $(wildcard $(COMMON_PATH)/*.c)
+LIBSRCS += $(wildcard $(USBCORE_PATH)/Src/*.c) $(wildcard $(USBCDC_PATH)/Src/*.c) $(wildcard $(VCP_PATH)/*.c)
+LIBSRCS += $(wildcard $(NP2_PATH)/src/*.c) $(wildcard $(VCP_PATH)/src/*.c)
+LIBSRCS += $(wildcard $(FREERTOS_PATH)/*.c) $(wildcard $(FREERTOS_PATH)/portable/GCC/ARM_CM4F/*.c) $(FREERTOS_PATH)/portable/MemMang/heap_1.c
+
+OBJDIR = obj
+LIBOBJ = $(addprefix $(OBJDIR)/, $(notdir $(LIBSRCS:%.c=%.o)))
+LIBOBJAS = $(addprefix $(OBJDIR)/, $(notdir $(STARTUP:%.s=%.o)))
+
+NP2OBJ = $(LIBOBJ) $(LIBOBJAS)
+
+obj/%.o:
+	@echo "Building $^"
+	@$(CC) $(CFLAGS) -c $^ -o $@
+
+obj/startup_stm32f405xx.o: $(STARTUP)
+	$(CC) $(CFLAGS) -c $(STARTUP) -o $@
+
+define make-deps
+$(OBJDIR)/$(notdir $(1:%.c=%.o)): $1
+endef
+
+$(foreach d, $(LIBSRCS), $(eval $(call make-deps,$d)))
