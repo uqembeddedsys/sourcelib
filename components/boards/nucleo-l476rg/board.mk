@@ -19,15 +19,15 @@ STARTUP = $(BRD_PATH)/$(STARTUP_FILE).s	# add startup file to build
 ####################################################
 # Startup file, linker file and CPU model settings
 
-STARTUP_FILE=startup_stm32f401xe
-LINKER_FILE=STM32F401RETx_FLASH
-CPU_MODEL=STM32F401xE
+STARTUP_FILE=startup_stm32l476xx
+LINKER_FILE=STM32L476RGTx_FLASH
+CPU_MODEL=STM32L476xx
  
 ###################################################
 # LIBRARY SOURCES
 
-BRD_PATH=$(SOURCELIB_ROOT)/components/boards/nucleo-f401re
-HAL_PATH=$(SOURCELIB_ROOT)/components/hal/STM32F4xx_HAL_Driver
+BRD_PATH=$(SOURCELIB_ROOT)/components/boards/nucleo-l476rg
+HAL_PATH=$(SOURCELIB_ROOT)/components/hal/STM32L4xx_HAL_Driver
 UTIL_PATH=$(SOURCELIB_ROOT)/components/util
 CMSIS_PATH=$(SOURCELIB_ROOT)/components/hal/CMSIS/Include
 CMSISRTOS_PATH=$(SOURCELIB_ROOT)/components/os/CMSIS_RTOS

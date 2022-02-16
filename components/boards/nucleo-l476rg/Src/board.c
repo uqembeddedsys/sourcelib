@@ -152,7 +152,8 @@ void BRD_debuguart_puts(unsigned char *c)
 	int i;
 
 	for (i = 0; i < (int) strlen(c); i++) {
-	__HAL_UART_FLUSH_DRREGISTER(&UART_debug) = (uint8_t) (*(c + i));
+		BRD_debuguart_putc((uint8_t) (*(c + i)));
+	//__HAL_UART_FLUSH_DRREGISTER(&UART_debug) = (uint8_t) (*(c + i));
 
 	}
 
