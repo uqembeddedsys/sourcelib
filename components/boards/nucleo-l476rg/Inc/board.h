@@ -155,9 +155,9 @@
 //LED definitions (Green - LD0, Blue - LD1, Red - LD2)
 #define BRD_GREEN_LED					0	//LD1
 #define BRD_GREEN_LEDMASK				1 << BRD_GREEN_LED
-#define BRD_GREEN_LED_PIN               GPIO_PIN_13
-#define BRD_GREEN_LED_GPIO_PORT         GPIOB
-#define __BRD_GREEN_LED_GPIO_CLK()      __GPIOB_CLK_ENABLE()
+#define BRD_GREEN_LED_PIN               GPIO_PIN_5
+#define BRD_GREEN_LED_GPIO_PORT         GPIOA
+#define __BRD_GREEN_LED_GPIO_CLK()      __GPIOA_CLK_ENABLE()
 
 void BRD_LEDInit();
 void BRD_LEDOn(uint8_t ledmask);

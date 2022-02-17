@@ -22,6 +22,7 @@ int main(void)  {
   uint32_t prev_tick;
 
 	HAL_Init();			//Initalise Board
+  //BRD_init();
 	Hardware_init();	//Initalise hardware modules
 	
   prev_tick = 0;
@@ -50,5 +51,5 @@ void Hardware_init(void) {
 	BRD_LEDInit();		//Initialise LEDS
 
 	// Turn off LEDs
-	BRD_LEDGreenOff();
+	BRD_LEDGreenOn();
 }
