@@ -22,8 +22,8 @@ all: proj
 #include nucelo-xxx makefile - NOTE MUST BE LAST TO INCLUDE
 include $(SOURCELIB_ROOT)/../stages/sX/filelist.mk			#replace with your stages folder path (e.g. stages/s1)
 include $(SOURCELIB_ROOT)/components/boards/nucleo-l476rg/board.mk
-include $(SOURCELIB_ROOT)/components/mk/m_launch.mk
-include $(SOURCELIB_ROOT)/components/mk/m_common.mk
+include $(SOURCELIB_ROOT)/components/mk/nucleo-l476/m_launch.mk
+include $(SOURCELIB_ROOT)/components/mk/nucleo-l476/m_common.mk
 
 lib:
 	$(MAKE) -C lib

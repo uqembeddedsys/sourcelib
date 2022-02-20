@@ -30,8 +30,8 @@ include $(FREERTOS_PATH)/filelist.mk
 
 #include nucelo-xxx makefile - NOTE MUST BE LAST TO INCLUDE
 include $(SOURCELIB_ROOT)/components/boards/nucleo-f401re/board.mk
-include $(SOURCELIB_ROOT)/components/mk/m_launch.mk
-include $(SOURCELIB_ROOT)/components/mk/m_common.mk
+include $(SOURCELIB_ROOT)/components/mk/nucleo-f401/m_launch.mk
+include $(SOURCELIB_ROOT)/components/mk/nucleo-f401/m_common.mk
 
 lib:
 	$(MAKE) -C lib
