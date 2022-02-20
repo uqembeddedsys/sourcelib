@@ -22,11 +22,11 @@ depend: .depend
 	mkdir -p obj
 	$(CC) $(CFLAGS) -MM $^>>./.depend;
 
-flash:
-	python3 ${SOURCELIB_ROOT}/tools/programming/flash.py --bin main.bin --addr 0x08000000 --mcu STM32F429ZI --type SWD --speed 4000 --erase --rst
-
 mflash:
-	echo "r\nh\nloadfile main.hex \nr\nexit\n" | JLinkExe -device STM32F429ZI -if swd -speed 4800
+	python3 ${SOURCELIB_ROOT}/tools/programming/flash.py --bin main.bin --addr 0x08000000 --mcu STM32F401RE --type SWD --speed 4000 --erase --rst
+
+flash:
+	echo "r\nh\nloadfile main.hex \nr\nexit\n" | JLinkExe -device STM32F401RE -if swd -speed 4800
 
 clean:
 	rm -f *.o
