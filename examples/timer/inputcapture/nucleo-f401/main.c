@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    timer/inputcapture/main.c
   * @author  MDS
-  * @date    02032018
-  * @brief   Enable the Timer Input capture on Board Pin A6 (PB1). Blinks LED
+  * @date    02022022
+  * @brief   Enable the Timer Input capture on Board Pin CN10-24 (PB1). Blinks LED
   * 		 When input capture occurs.
   *			 See Section 18 (TIM3), P592 of the STM32F4xx Reference Manual.
   ******************************************************************************
