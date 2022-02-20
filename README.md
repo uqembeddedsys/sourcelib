@@ -1,4 +1,4 @@
-## Source code for STM32F platforms
+## Source code for STM32F and STM32L platforms
 Source folder
 
 ## Example code for
