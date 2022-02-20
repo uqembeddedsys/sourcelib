@@ -3,6 +3,7 @@ sudo apt-get install -y gcc-arm-none-eabi	#Install ARM GCC EABI compiler
 sudo apt-get install -y gdb-arm-none-eabi
 sudo apt-get install -y libnewlib-arm-none-eabi	#Install ARM new library
 sudo apt-get install -y gitg		#Git management
+sudo apt-get install -y screen
 sudo apt-get remove modemmanager brltty	#Remove serial terminal interference
 sudo adduser $USER dialout		#Add user permissions for dialout
 sudo apt-get install -y python3-pip
