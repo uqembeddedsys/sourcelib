@@ -31,7 +31,7 @@
 #define UART_DEV_BAUD	115200					 //NOTE: If using USART1 or USART6, HAL_RCC_GetPCLK2Freq must be used.
 #define UART_DEV_IRQn	USART3_IRQn
 
-void Hardware_init(void);
+void hardware_init(void);
 
 /*
  * Main program
@@ -42,7 +42,7 @@ int main(void) {
 	int txCount = 0;
 
 	HAL_Init();
-	Hardware_init(); // Initialise hardware peripherals
+	hardware_init(); // Initialise hardware peripherals
 
 	// Cyclic Executive (CE) loop
 	while (1) {
@@ -64,7 +64,7 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit(); //Initialise LEDs
 

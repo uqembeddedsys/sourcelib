@@ -3,16 +3,11 @@
 #
 # all the files will be generated with this name (main.elf, main.bin, main.hex, etc)
 
-#location of freertos source files
-FREERTOS_PATH=$(SOURCELIB_ROOT)/components/os/FreeRTOS
-
-#Name of project
+# Name of project
 PROJ_NAME=main
 
-#Your local source files must ONLY be added to SRCS
-SRCS = $(PROJ_NAME).c 
-CFLAGS += -I.
-
+# main.c file
+SRCS = $(PROJ_NAME).c
 ###################################################
 ROOT=$(shell pwd)
 
@@ -22,11 +17,6 @@ OBJS=$(SRCS:.c=.o)
 
 .PHONY: $(shell mkdir -p obj) lib proj all depend
 all: proj
-
-include ./filelist.mk
-
-#Include freertos makefile
-include $(FREERTOS_PATH)/filelist.mk
 
 #include nucelo-xxx makefile - NOTE MUST BE LAST TO INCLUDE
 include $(SOURCELIB_ROOT)/components/boards/nucleo-l476rg/board.mk

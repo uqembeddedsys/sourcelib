@@ -12,10 +12,12 @@
 
 #include "board.h"
 #include "processor_hal.h"
-#include "main.h"
 
 #define TIMER_RUNNING_FREQ  50000           //Frequency (in Hz)
 #define TIMER_1SECOND_PERIOD    50000       //Period for 1s (in count ticks)
+
+void hardware_init(void);
+void tui_callback(void);
 
 
 int main(void) {
@@ -47,9 +49,7 @@ void hardware_init(void) {
 	BRD_LEDInit();		//Initialise LEDS
 
 	// Turn off LEDs
-	BRD_LEDRedOff();
 	BRD_LEDGreenOff();
-	BRD_LEDBlueOff();
 
 	// Timer 2 clock enable
 	__TIM2_CLK_ENABLE();
@@ -80,12 +80,22 @@ void hardware_init(void) {
 /*
  * Timer update interrupt callback
  */
-void Tui_callback(void) {
+void tui_callback(void) {
 
-	if((TIM2->SR & TIM_SR_UIF) != 0) {	// Check if overflow has taken place 
+	BRD_LEDGreenToggle();												// If overflow occurred, Toggle LED 
+}
 
-		BRD_LEDBlueToggle();												// If overflow occurred, Toggle LED 
+/*
+ * Interrupt handler for Timer 2 Interrupt Handler
+ */ 
+void TIM2_IRQHandler(void)
+{
+
+	//Check and clear overflow flag.
+	if((TIM2->SR & TIM_SR_UIF) == TIM_SR_UIF) {	// Check if overflow has taken place 
+
 		TIM2->SR &= ~TIM_SR_UIF; 					// Clear the UIF Flag
 
+		tui_callback();   // Callback for timer update interrupt
 	}
 }

@@ -19,7 +19,7 @@ OBJS=$(SRCS:.c=.o)
 .PHONY: $(shell mkdir -p obj) lib proj all depend
 all: proj
 
-#include nucelo-f429zi makefile - NOTE MUST BE LAST TO INCLUDE
+#include nucelo-xxx makefile - NOTE MUST BE LAST TO INCLUDE
 include $(SOURCELIB_ROOT)/../stages/sX/filelist.mk			#replace with your stages folder path (e.g. stages/s1)
 include $(SOURCELIB_ROOT)/components/boards/nucleo-f401re/board.mk
 include $(SOURCELIB_ROOT)/components/mk/m_launch.mk
