@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    pwm/dynamic/main.c
+  * @file    pwm/dynamic/
   * @author  MDS
   * @date    02032018
   * @brief   Enable a dynamic (varying) PWM output on Board Pin D22 (PB5).
@@ -53,9 +53,7 @@ void hardware_init(void) {
 	BRD_LEDInit();		//Initialise LEDS
 
 	// Turn off LEDs
-	BRD_LEDRedOff();
 	BRD_LEDGreenOff();
-	BRD_LEDBlueOff();
 
 	// Enable GPIOC Clock
 	__GPIOB_CLK_ENABLE();

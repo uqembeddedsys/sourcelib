@@ -3,7 +3,7 @@
   * @file    adc/main.c
   * @author  MDS
   * @date    05032021
-  * @brief   Enable the ADC1 on Board pin A0 (PA3).
+  * @brief   Enable the ADC1 on Board pin A0 (PA0).
   *			 See Section 13 (ADC), P385 of the STM32F4xx Reference Manual.
   ******************************************************************************
   *
@@ -61,17 +61,17 @@ void hardware_init(void) {
 	// Enable the GPIO A Clock
   	__GPIOA_CLK_ENABLE();
   
-	// Initalise PA3 as an Analog input.
-  	GPIOA->MODER |= (0x03 << (3 * 2));			//Set bits for Analog input mode
+	// Initalise PA0 as an Analog input.
+  	GPIOA->MODER |= (0x03 << (0 * 2));			//Set bits for Analog input mode
 
-  	GPIOA->OSPEEDR &= ~(0x03<<(3 * 2));
-	GPIOA->OSPEEDR |= 0x02<<(3 * 2);  			// Fast speed
+  	GPIOA->OSPEEDR &= ~(0x03<<(0 * 2));
+	GPIOA->OSPEEDR |= 0x02<<(0 * 2);  			// Fast speed
 
-	GPIOA->PUPDR &= ~(0x03 << (3 * 2));			//Clear bits for no push/pull
+	GPIOA->PUPDR &= ~(0x03 << (0 * 2));			//Clear bits for no push/pull
 
 	__ADC1_CLK_ENABLE();						//Enable ADC1 clock
 
-	AdcHandle.Instance = (ADC_TypeDef *)(ADC1_BASE);						//Use ADC1 (For PA3)
+	AdcHandle.Instance = (ADC_TypeDef *)(ADC1_BASE);						//Use ADC1 (For PA0)
 	AdcHandle.Init.ClockPrescaler        = ADC_CLOCKPRESCALER_PCLK_DIV2;	//Set clock prescaler
 	AdcHandle.Init.Resolution            = ADC_RESOLUTION12b;				//Set 12-bit data resolution
 	AdcHandle.Init.ScanConvMode          = DISABLE;
@@ -88,7 +88,7 @@ void hardware_init(void) {
 	HAL_ADC_Init(&AdcHandle);		//Initialise ADC
 
 	// Configure ADC Channel
-	AdcChanConfig.Channel = ADC_CHANNEL_3;					//PA3 has Analog Channel 3 connected
+	AdcChanConfig.Channel = ADC_CHANNEL_0;					//PA0 has Analog Channel 0 connected
 	AdcChanConfig.Rank         = 1;
 	AdcChanConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
 	AdcChanConfig.Offset       = 0;

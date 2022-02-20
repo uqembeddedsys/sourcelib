@@ -8,7 +8,7 @@ PROJ_NAME=main
 
 #Your local source files
 SRCS = $(PROJ_NAME).c
-CFLAGS += -DENABLE_DEBUG_UART #enable USB Virtual Com Port
+CFLAGS += -DENABLE_DEBUG_UART #enable Debug Com Port
 ###################################################
 ROOT=$(shell pwd)
 

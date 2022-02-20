@@ -8,7 +8,7 @@ PROJ_NAME=main
 
 #Your local source files
 SRCS = $(PROJ_NAME).c
-CFLAGS += -DENABLE_DEBUG_UART #enable USB Virtual Com Port
+CFLAGS += -DENABLE_DEBUG_UART #enable Debug Com Port
 ###################################################
 ROOT=$(shell pwd)
 
@@ -19,8 +19,8 @@ OBJS=$(SRCS:.c=.o)
 .PHONY: $(shell mkdir -p obj) lib proj all depend
 all: proj
 
-#include nucelo-f429zi makefile - NOTE MUST BE LAST TO INCLUDE
-include $(SOURCELIB_ROOT)/components/boards/nucleo-f429zi/board.mk
+#include nucelo-xxx makefile - NOTE MUST BE LAST TO INCLUDE
+include $(SOURCELIB_ROOT)/components/boards/nucleo-f401re/board.mk
 include $(SOURCELIB_ROOT)/components/mk/m_launch.mk
 include $(SOURCELIB_ROOT)/components/mk/m_common.mk
 
