@@ -8,21 +8,20 @@
   ******************************************************************************
   */
 
-/* Includes ------------------------------------------------------------------*/
 #include "board.h"
 #include "processor_hal.h"
 
-void Hardware_init(void);
+void hardware_init(void);
 
 /*
- * @brief  Main program - flashes onboard LEDs
+ * Main program - flashes onboard LEDs
  */
 int main(void)  {
 
   uint32_t prev_tick;
 
 	HAL_Init();			//Initalise Board
-	Hardware_init();	//Initalise hardware modules
+	hardware_init();	//Initalise hardware modules
 	
   prev_tick = 0;
 
@@ -43,11 +42,13 @@ int main(void)  {
 }
 
 /*
- * @brief  Initialise Hardware
+ * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit();		//Initialise LEDS
+
+
 
 	// Turn off LEDs
 	BRD_LEDGreenOn();

@@ -34,7 +34,7 @@
 #define MMA8452Q_ADDRESS		0x1D << 1		//MMA8452Q I2C address
 #define MMA8452Q_WHO_AM_I_REG	0x0D		//MMA8452Q "Who am I" register address
 
-void Hardware_init(void);
+void hardware_init(void);
 
 /*
  * Main program
@@ -45,7 +45,7 @@ int main(void) {
 	uint32_t status;
 
 	HAL_Init(); 		// Initialise Board
-	Hardware_init(); 	// Initialise hardware peripherals
+	hardware_init(); 	// Initialise hardware peripherals
 
 	// Cyclic Executive (CE) loop
 	while (1) {
@@ -114,7 +114,7 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	uint32_t pclk1;
 	uint32_t freqrange;

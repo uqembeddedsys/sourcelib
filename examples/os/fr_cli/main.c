@@ -37,7 +37,7 @@ static TaskHandle_t cliTask_handle = NULL;
 StreamBufferHandle_t xStreamBuffer;
 
 
-void Hardware_init();
+void hardware_init();
 void ledTask( void );
 
 CLI_Command_Definition_t xEcho = {	// Structure that defines the "echo" command line command.
@@ -89,7 +89,7 @@ int main( void ) {
  */
 void ledTask( void ) {
 
-	Hardware_init();
+	hardware_init();
 
 	// Cyclic Executive (CE) loop
 	for (;;) {
@@ -258,7 +258,7 @@ void Uart_callback(void) {
 /*
  * Hardware Initialisation - MUST be alled from a task and not in main.
  */
-void Hardware_init( void ) {
+void hardware_init( void ) {
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 

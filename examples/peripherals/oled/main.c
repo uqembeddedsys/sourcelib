@@ -33,7 +33,7 @@
 #define I2C_DEV				I2C1
 #define I2C_DEV_CLOCKSPEED 	100000
 
-void Hardware_init(void);
+void hardware_init(void);
 
 /*
  * Main program
@@ -45,7 +45,7 @@ int main(void) {
 	int i, dx,j;
 
 	HAL_Init(); 		// Initialise Board
-	Hardware_init(); 	// Initialise hardware peripherals
+	hardware_init(); 	// Initialise hardware peripherals
 
 	dx = 0;
 
@@ -95,7 +95,7 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	uint32_t pclk1;
 	uint32_t freqrange;

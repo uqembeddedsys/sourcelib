@@ -17,7 +17,7 @@ sourcelib/examples
 
 ## getting_started  
 * blink - Flashing LED Example
-* console - Console example - debug_printf, debug_putc and debug_getc example
+* console - Console example - debug_log, debug_putc and debug_getc example
 * hamming - Hamming Ecoder example
 
 ## gpio  

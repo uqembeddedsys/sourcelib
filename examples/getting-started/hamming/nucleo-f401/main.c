@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    getting_started/hamming/main.c
   * @author  MDS & KB
-  * @date    04022015
+  * @date    04022022
   * @brief   Hamming encoder example.
   *			 Bytes received from the VCP are Hamming encoded and displayed.
   ******************************************************************************
@@ -11,23 +11,18 @@
 
 #include "board.h"
 #include "processor_hal.h"
+#include "debug_log.h"
 
-void Hardware_init();
+void hardware_init();
 uint16_t hamming_byte_encoder(uint8_t input);
 
-
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
 void main(void) {
 
 	uint8_t unencodedbyte;
 	uint16_t CodedWord;
 
 	HAL_Init();	//Initialise NP2
-	Hardware_init();	//Initialise hardware modules
+	hardware_init();	//Initialise hardware modules
 
 	unencodedbyte = 0x34;
 
@@ -37,7 +32,10 @@ void main(void) {
 		// Hamming encode received character 
 		CodedWord = hamming_byte_encoder(unencodedbyte);
 
-    	BRD_LEDBlueToggle();	//Toggle LED on/off
+		debug_log("coded word %X\n\r", CodedWord);
+
+
+    	BRD_LEDGreenToggle();	//Toggle LED on/off
     	HAL_Delay(1000);	//Delay function
   	}
 }
@@ -93,10 +91,10 @@ uint8_t hamming_hbyte_encoder(uint8_t in) {
 
 }
 
-/**
-  * Implement Hamming Code on a full byte of input
-  * This means that 16-bits out output is needed
-  */
+/*
+ * Implement Hamming Code on a full byte of input
+ * This means that 16-bits out output is needed
+ */
 uint16_t hamming_byte_encoder(uint8_t input) {
 
 	uint16_t out;
@@ -111,18 +109,17 @@ uint16_t hamming_byte_encoder(uint8_t input) {
 
 }
 
-/**
-  * @brief  Initialise Hardware
-  * @param  None
-  * @retval None
-  */
-void Hardware_init() {
+/*
+ * Initialise Hardware
+ */
+void hardware_init() {
 
 	BRD_LEDInit();		//Initialise Blue LED
-	/* Turn off LEDs */
-	BRD_LEDRedOff();
+	
+	BRD_debuguart_init();  //Initialise UART for debug log output
+
+	// Turn off LED
 	BRD_LEDGreenOff();
-	BRD_LEDBlueOff();
 
 }
 

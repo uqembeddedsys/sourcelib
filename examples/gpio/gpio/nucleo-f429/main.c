@@ -3,7 +3,7 @@
   * @file    gpio/main.c
   * @author  MDS
   * @date    27112017
-  * @brief   Nucleo429ZI onboard GPIO pin read and write, using Pins G9 (Board D0)
+  * @brief   Nucleo onboard GPIO pin read and write, using Pins G9 (Board D0)
   *          G14 (Board D1).
   *          To view the output, run the debugger to view the GPIOG ODR and IDR.
   ******************************************************************************
@@ -12,20 +12,18 @@
 #include "board.h"
 #include "processor_hal.h"
 
-void Hardware_init(void);
+void hardware_init(void);
 
-/**
-  * @brief  Main program - flashes on board LEDs
-  * @param  None
-  * @retval None
-  */
+/*
+ * Main program - flashes on board LEDs
+ */
 int main(void)  {
 
 	uint16_t write_value = 0;
 
-	HAL_Init();			//Initialise board.
+	HAL_Init();			  //Initialise board.
 
-	Hardware_init();	//Initialise hardware modules
+	hardware_init();	//Initialise hardware modules
 
 	// Main processing loop
   while (1) {
@@ -41,13 +39,13 @@ int main(void)  {
       GPIOG->ODR &= ~(0x01 << 9);   //Clear the bit in the ODR
     }
 
-    //Turn Blue LED on, if pin G14 is high
+    //Turn Green LED on, if pin G14 is high
     if ((GPIOG->IDR & (0x0001 << 14)) == (0x0001 << 14)){
       
-      BRD_LEDBlueOn(); 
+      BRD_LEDGreenOn(); 
     } else {  
 
-      BRD_LEDBlueOff();
+      BRD_LEDGreenOff();
     } 
   }
 
@@ -57,10 +55,10 @@ int main(void)  {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
   BRD_LEDInit();		//Initialise LEDS
-	BRD_LEDBlueOff();
+	BRD_LEDGreenOff();
 
 	// Enable the GPIO G Clock
   __GPIOG_CLK_ENABLE();

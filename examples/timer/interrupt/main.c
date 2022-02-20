@@ -30,7 +30,7 @@ int main(void) {
        - Low Level Initialisation
 	 */
 	HAL_Init();
-	Hardware_init();
+	hardware_init();
 
 	/* Infinite loop */
 	while (1) {
@@ -42,7 +42,7 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit();		//Initialise LEDS
 

@@ -28,7 +28,7 @@ struct Message {	// Example Message consists of sequence number and LED values
 
 QueueHandle_t MessageQueue;	// Queue used
 
-static void Hardware_init();
+static void hardware_init();
 void senderTask( void );
 void receiverTask( void );
 
@@ -81,7 +81,7 @@ void senderTask( void ) {
 
 	struct Message SendMessage;
 
-	Hardware_init();
+	hardware_init();
 
 	MessageQueue = xQueueCreate(10, sizeof(SendMessage));		// Create queue of length 10 Message items 
 
@@ -167,7 +167,7 @@ void receiverTask( void ) {
 /*
  * Hardware Initialisation.
  */
-void Hardware_init( void ) {
+void hardware_init( void ) {
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 	BRD_LEDInit();				//Initialise Blue LED

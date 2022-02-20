@@ -28,7 +28,7 @@ struct Message {	// Example Message consists of sequence number and LED values
 
 StreamBufferHandle_t xStreamBuffer;
 
-static void Hardware_init();
+static void hardware_init();
 void senderTask( void );
 void receiverTask( void );
 
@@ -83,7 +83,7 @@ void senderTask( void ) {
 
 	const size_t xStreamBufferSizeBytes = 10, xTriggerLevel = 1;
 
-	Hardware_init();
+	hardware_init();
 
     // Create a stream buffer
     xStreamBuffer = xStreamBufferCreate( xStreamBufferSizeBytes, xTriggerLevel );
@@ -160,7 +160,7 @@ void receiverTask( void ) {
 /*
  * Hardware Initialisation.
  */
-void Hardware_init( void ) {
+void hardware_init( void ) {
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 	BRD_LEDInit();				//Initialise Blue LED

@@ -24,7 +24,7 @@
 SemaphoreHandle_t ledSemaphore;	// Semaphore for LED flasher
 SemaphoreHandle_t pbSemaphore;	// Semaphore for pushbutton interrupt
 
-static void Hardware_init();
+static void hardware_init();
 void giveTask( void );
 void takeTask( void );
 
@@ -74,7 +74,7 @@ void giveTask( void ) {
 	ledSemaphore = xSemaphoreCreateBinary();
 	pbSemaphore = xSemaphoreCreateBinary();
 
-	Hardware_init();
+	hardware_init();
 
 	for (;;) {
 
@@ -144,7 +144,7 @@ void takeTask( void ) {
 /*
  * Hardware Initialisation.
  */
-static void Hardware_init( void ) {
+static void hardware_init( void ) {
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 

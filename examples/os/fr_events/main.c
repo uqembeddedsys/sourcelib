@@ -23,7 +23,7 @@
 
 EventGroupHandle_t ledctrlEventGroup;		//Control Event Group
 
-static void Hardware_init();
+static void hardware_init();
 void ApplicationIdleHook( void ); // The idle hook is just used to stream data to the USB port.
 void giveTask( void );
 void takeTask( void );
@@ -75,7 +75,7 @@ void giveTask( void ) {
 	EventBits_t uxBits;
 	uint8_t mode = 0;
 
-	Hardware_init();
+	hardware_init();
 
 	// Create Event Group
 	ledctrlEventGroup = xEventGroupCreate();
@@ -145,7 +145,7 @@ void takeTask( void ) {
   * @param  None
   * @retval None
   */
-static void Hardware_init( void ) {
+static void hardware_init( void ) {
 
 	GPIO_InitTypeDef GPIO_InitStructure;
 

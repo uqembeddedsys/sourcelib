@@ -17,13 +17,13 @@
 #define TIMER_1SECOND_PERIOD_TICKS		50000 									//1/(1/TIMER_RUNNING_FREQ) is the Period in timer ticks
 #define TIMER_50PERCENT_DUTYCYLE_TICKS	50*TIMER_1SECOND_PERIOD_TICKS/100		//Duty Cycle on time in timer ticks
 
-void Hardware_init(void);
+void hardware_init(void);
 
 
 int main(void) {
 	
 	HAL_Init();
-	Hardware_init();
+	hardware_init();
 
 	// Main Processing Loop	
 	while (1) {
@@ -38,7 +38,7 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit();		//Initialise LEDS
 

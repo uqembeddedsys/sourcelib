@@ -37,7 +37,7 @@
 #define SPI_DEV_CS_HIGH() SET_BIT(SPI_DEV_CS_GPIO->ODR, 0x01 << SPI_DEV_CS_PIN)
 #define SPI_DEV_CS_LOW() CLEAR_BIT(SPI_DEV_CS_GPIO->ODR, 0x01 << SPI_DEV_CS_PIN)
 
-void Hardware_init(void);
+void hardware_init(void);
 uint8_t Spi_sendbyte(uint8_t sendbyte);
 
 /*
@@ -48,7 +48,7 @@ int main(void) {
 	uint8_t received_value;
 
 	HAL_Init(); // Initialise Board
-	Hardware_init(); // Initialise hardware peripherals
+	hardware_init(); // Initialise hardware peripherals
 
 	// Cyclic Executive (CE) loop
 	while (1) {
@@ -64,7 +64,7 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit(); //Initialise LEDs
 

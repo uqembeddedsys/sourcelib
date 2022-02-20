@@ -10,9 +10,9 @@
 
 #include "board.h"
 #include "processor_hal.h"
-#include "main.h"
 
-void Hardware_init(void);
+void hardware_init(void);
+void pb_callback(uint16_t GPIO_Pin);
 
 int main(void) {
 	/* STM32F4xx HAL library initialisation:
@@ -26,7 +26,7 @@ int main(void) {
        - Low Level Initialisation
 	 */
 	HAL_Init();
-	Hardware_init();
+	hardware_init();
 
 	/* Infinite loop */
 	while (1) {
@@ -38,51 +38,66 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit();		//Initialise LEDS
 
 	// Turn off LEDs
-	BRD_LEDRedOff();
-	BRD_LEDGreenOff();
-	BRD_LEDBlueOff();
+	BRD_LEDGreenOff();;
 
 	// Enable GPIOC Clock
-	__GPIOG_CLK_ENABLE();
+	__GPIOC_CLK_ENABLE();
 
-    GPIOG->OSPEEDR |= (GPIO_SPEED_FAST << 9);	//Set fast speed.
-	GPIOG->PUPDR &= ~(0x03 << (9 * 2));			//Clear bits for no push/pull
-	GPIOG->PUPDR |= ((0x02) << (9 * 2));  //Set for Pull down output
-	//GPIOG->MODER &= ~(0x01 << (9 * 2));			//Clear bits for input mode
+    GPIOC->OSPEEDR |= (GPIO_SPEED_FAST << 13);	//Set fast speed.
+	GPIOC->PUPDR &= ~(0x03 << (13 * 2));			//Clear bits for no push/pull
+	GPIOC->MODER &= ~(0x03 << (13 * 2));			//Clear bits for input mode
 
 	// Enable EXTI clock
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 
 	//select trigger source (port c, pin 13) on EXTICR4.
-	SYSCFG->EXTICR[2] &= ~SYSCFG_EXTICR3_EXTI9;
-	SYSCFG->EXTICR[2] |= SYSCFG_EXTICR3_EXTI9_PG;
-	//SYSCFG->EXTICR[2] &= ~(0x00F0);
+	SYSCFG->EXTICR[3] &= ~SYSCFG_EXTICR4_EXTI13;
+	SYSCFG->EXTICR[3] |= SYSCFG_EXTICR4_EXTI13_PC;
+	SYSCFG->EXTICR[3] &= ~(0x000F);
 
-	EXTI->RTSR |= EXTI_RTSR_TR9;	//enable rising dedge
-	EXTI->FTSR &= ~EXTI_FTSR_TR9;	//disable falling edge
-	EXTI->IMR |= EXTI_IMR_IM9;		//Enable external interrupt
+	EXTI->RTSR1 |= EXTI_RTSR1_RT13;	//enable rising dedge
+	EXTI->FTSR1 &= ~EXTI_FTSR1_FT13;	//disable falling edge
+	EXTI->IMR1 |= EXTI_IMR1_IM13;		//Enable external interrupt
 
 	//Enable priority (10) and interrupt callback. Do not set a priority lower than 5.
-	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 10, 0);
-	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 10, 0);
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
 /*
  * Push Button callback
  */
-void Pb_callback(uint16_t GPIO_Pin) {
+void pb_callback(uint16_t GPIO_Pin) {
 
 	// Check if the pushbutton pin was pressed.
-	if (GPIO_Pin == 9) {
+	if (GPIO_Pin == 13) {
 		
-		BRD_LEDBlueToggle(); 		//Toggle Blue LED
+		BRD_LEDGreenToggle(); 		//Toggle Blue LED
 
-		EXTI->PR |= EXTI_PR_PR9;	//Clear interrupt flag.
 	}
+}
+
+/*
+ * Interrupt handler (ISR) for EXTI 15 to 10 IRQ Handler
+ * Note ISR should only execute a callback
+ */ 
+void EXTI15_10_IRQHandler(void) {
+
+	NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
+	
+	// PR: Pending register
+	if ((EXTI->PR1 & EXTI_PR1_PIF13) == EXTI_PR1_PIF13) {
+		
+		EXTI->PR1 |= EXTI_PR1_PIF13;	//Clear interrupt flag.
+
+		pb_callback(13);   // Callback for C13
+	}
+
+	
 }

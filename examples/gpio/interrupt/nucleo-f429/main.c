@@ -10,9 +10,9 @@
 
 #include "board.h"
 #include "processor_hal.h"
-#include "main.h"
 
-void Hardware_init(void);
+void hardware_init(void);
+void pb_callback(uint16_t GPIO_Pin);
 
 int main(void) {
 	/* STM32F4xx HAL library initialisation:
@@ -26,7 +26,7 @@ int main(void) {
        - Low Level Initialisation
 	 */
 	HAL_Init();
-	Hardware_init();
+	hardware_init();
 
 	/* Infinite loop */
 	while (1) {
@@ -38,14 +38,12 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit();		//Initialise LEDS
 
 	// Turn off LEDs
-	BRD_LEDRedOff();
-	BRD_LEDGreenOff();
-	BRD_LEDBlueOff();
+	BRD_LEDGreenOff();;
 
 	// Enable GPIOC Clock
 	__GPIOC_CLK_ENABLE();
@@ -75,13 +73,32 @@ void Hardware_init(void) {
 /*
  * Push Button callback
  */
-void Pb_callback(uint16_t GPIO_Pin) {
+void pb_callback(uint16_t GPIO_Pin) {
 
 	// Check if the pushbutton pin was pressed.
 	if (GPIO_Pin == 13) {
 		
-		BRD_LEDBlueToggle(); 		//Toggle Blue LED
+		BRD_LEDGreenToggle(); 		//Toggle Blue LED
 
-		EXTI->PR |= EXTI_PR_PR13;	//Clear interrupt flag.
 	}
+}
+
+/*
+ * Interrupt handler (ISR) for EXTI 15 to 10 IRQ Handler
+ * Note ISR should only execute a callback
+ */ 
+void EXTI15_10_IRQHandler(void) {
+
+	NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
+
+	// PR: Pending register
+	if ((EXTI->PR & EXTI_PR_PR13) == EXTI_PR_PR13) {
+
+		// cleared by writing a 1 to this bit
+		EXTI->PR |= EXTI_PR_PR13;	//Clear interrupt flag.
+
+		pb_callback(13);   // Callback for C13
+	}
+
+	
 }

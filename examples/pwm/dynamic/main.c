@@ -19,7 +19,7 @@
 #define PWM_PERCENT2TICKS_DUTYCYCLE(value)	(uint16_t)(value*PWM_PULSE_WIDTH_TICKS/100)				//Duty Cycle on time in timer ticks
 #define PWM_DUTYCYCLE_CHANGE(value) 			TIM3->CCR2=(uint16_t)value									//Change PWM dutycyle
 
-void Hardware_init(void);
+void hardware_init(void);
 
 
 int main(void) {
@@ -27,7 +27,7 @@ int main(void) {
 	int dutycycle;
 
 	HAL_Init();
-	Hardware_init();
+	hardware_init();
 
 	dutycycle = 10;
 
@@ -48,7 +48,7 @@ int main(void) {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
 	BRD_LEDInit();		//Initialise LEDS
 

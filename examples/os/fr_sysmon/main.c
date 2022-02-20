@@ -19,7 +19,7 @@
 #include "task.h"
 #include "queue.h"
 
-void Hardware_init();
+void hardware_init();
 void Task1_Task( void );
 void Task2_Task( void );
 void Task3_Task( void );
@@ -91,7 +91,7 @@ int main( void ) {
  */
 void Task1_Task( void ) {
 
-	Hardware_init();
+	hardware_init();
 
 	SYSMON_CHAN0_CLR();				//Clear LA Channel 0
 
@@ -147,7 +147,7 @@ void Task3_Task( void ) {
 /*
  * Hardware Initialisation - MUST be alled from a task and not in main.
  */
-void Hardware_init( void ) {
+void hardware_init( void ) {
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 

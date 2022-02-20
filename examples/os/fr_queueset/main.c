@@ -36,7 +36,7 @@ QueueHandle_t MessageQueue;	// Queue used
 SemaphoreHandle_t ledSemaphore;	// Semaphore for LED flasher
 SemaphoreHandle_t pbSemaphore;	// Semaphore for pushbutton interrupt
 
-static void Hardware_init();
+static void hardware_init();
 void senderTask( void );
 void receiverTask( void );
 void giveTask( void );
@@ -92,7 +92,7 @@ void senderTask( void ) {
 
 	struct Message SendMessage;
 
-	Hardware_init();
+	hardware_init();
 
 	MessageQueue = xQueueCreate(10, sizeof(SendMessage));		// Create queue of length 10 Message items 
 
@@ -231,7 +231,7 @@ void receiverTask( void ) {
 /*
  * Hardware Initialisation.
  */
-static void Hardware_init( void ) {
+static void hardware_init( void ) {
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 

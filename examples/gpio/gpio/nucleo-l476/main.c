@@ -12,20 +12,18 @@
 #include "board.h"
 #include "processor_hal.h"
 
-void Hardware_init(void);
+void hardware_init(void);
 
-/**
-  * @brief  Main program - flashes on board LEDs
-  * @param  None
-  * @retval None
-  */
+/*
+ * Main program - flashes on board LEDs
+ */
 int main(void)  {
 
 	uint16_t write_value = 0;
 
 	HAL_Init();			//Initialise board.
 
-	Hardware_init();	//Initialise hardware modules
+	hardware_init();	//Initialise hardware modules
 
 	// Main processing loop
   while (1) {
@@ -41,7 +39,7 @@ int main(void)  {
       GPIOB->ODR &= ~(0x01 << 3);   //Clear the bit in the ODR
     }
 
-    //Turn Blue LED on, if pin A2 is high
+    //Turn Green LED on, if pin A2 is high
     if ((GPIOB->IDR & (0x0001 << 5)) == (0x0001 << 5)){
       
       BRD_LEDGreenOn(); 
@@ -57,7 +55,7 @@ int main(void)  {
 /*
  * Initialise Hardware
  */
-void Hardware_init(void) {
+void hardware_init(void) {
 
   BRD_LEDInit();		//Initialise LEDS
 	BRD_LEDGreenOff();

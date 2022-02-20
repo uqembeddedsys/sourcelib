@@ -16,7 +16,7 @@
 #include "task.h"
 #include "queue.h"
 
-void Hardware_init();
+void hardware_init();
 void someTask( void );
 
 // Task Priorities (Idle Priority is the lowest priority)
@@ -58,7 +58,7 @@ int main( void ) {
  */
 void someTask( void ) {
 
-	Hardware_init();
+	hardware_init();
 
 	// Cyclic Executive (CE) loop
 	for (;;) {
@@ -73,7 +73,7 @@ void someTask( void ) {
 /*
  * Hardware Initialisation - MUST be alled from a task and not in main.
  */
-void Hardware_init( void ) {
+void hardware_init( void ) {
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 
