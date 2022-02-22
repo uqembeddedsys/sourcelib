@@ -20,7 +20,7 @@ OBJS=$(SRCS:.c=.o)
 all: proj
 
 #include nucelo-xxx makefile - NOTE MUST BE LAST TO INCLUDE
-include $(SOURCELIB_ROOT)/../stages/sX/filelist.mk			#replace with your stages folder path (e.g. stages/s1)
+include $(SOURCELIB_ROOT)/../repo/sX/filelist.mk			#replace with your stages folder path (e.g. repo/s1)
 include $(SOURCELIB_ROOT)/components/boards/nucleo-f429zi/board.mk
 include $(SOURCELIB_ROOT)/components/mk/m_launch.mk
 include $(SOURCELIB_ROOT)/components/mk/m_common.mk
