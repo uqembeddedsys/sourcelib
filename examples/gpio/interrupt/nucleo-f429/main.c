@@ -58,7 +58,6 @@ void hardware_init(void) {
 	//select trigger source (port c, pin 13) on EXTICR4.
 	SYSCFG->EXTICR[3] &= ~SYSCFG_EXTICR4_EXTI13;
 	SYSCFG->EXTICR[3] |= SYSCFG_EXTICR4_EXTI13_PC;
-	SYSCFG->EXTICR[3] &= ~(0x000F);
 
 	EXTI->RTSR |= EXTI_RTSR_TR13;	//enable rising dedge
 	EXTI->FTSR &= ~EXTI_FTSR_TR13;	//disable falling edge
