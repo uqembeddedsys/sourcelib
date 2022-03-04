@@ -60,7 +60,7 @@ void hardware_init(void) {
   BRD_LEDInit();		//Initialise LEDS
 	BRD_LEDGreenOff();
 
-	// Enable the GPIO G Clock
+	// Enable the GPIO Clock
   __GPIOG_CLK_ENABLE();
 
   //Initialise G9 as an output.

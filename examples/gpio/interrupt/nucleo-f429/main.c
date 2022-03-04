@@ -45,7 +45,7 @@ void hardware_init(void) {
 	// Turn off LEDs
 	BRD_LEDGreenOff();;
 
-	// Enable GPIOC Clock
+	// Enable GPIO Clock
 	__GPIOC_CLK_ENABLE();
 
     GPIOC->OSPEEDR |= (GPIO_SPEED_FAST << 13);	//Set fast speed.

@@ -58,7 +58,7 @@ void hardware_init(void) {
 	// Turn off LEDs
 	BRD_LEDGreenOff();
 
-	// Enable the GPIO A Clock
+	// Enable the GPIO Clock
   	__GPIOA_CLK_ENABLE();
   
 	// Initalise PA3 as an Analog input.

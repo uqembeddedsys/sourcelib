@@ -58,10 +58,9 @@ void hardware_init(void) {
 	// Timer 3 clock enable
 	__TIM3_CLK_ENABLE();
 
-	// Compute the prescaler value
-	// Set the clock prescaler to 50kHz
+	// Compute the prescaler value to set the timer counting frequency to 50kHz
 	// SystemCoreClock is the system clock frequency
-	TIM3->PSC = ((SystemCoreClock / 2) / TIMER_RUNNING_FREQ) - 1;
+	TIM3->PSC = ((SystemCoreClock / 2) / TIMER_COUNTING_FREQ) - 1;
 
 	// Counting direction: 0 = up-counting, 1 = down-counting (Timer Control Register 1)
 	TIM3->CR1 &= ~TIM_CR1_DIR; 
