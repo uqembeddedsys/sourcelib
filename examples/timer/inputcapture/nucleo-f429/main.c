@@ -60,7 +60,7 @@ void hardware_init(void) {
 
 	// Compute the prescaler value to set the timer counting frequency to 50kHz
 	// SystemCoreClock is the system clock frequency
-	TIM3->PSC = ((SystemCoreClock / 2) / TIMER_COUNTING_FREQ) - 1;
+	TIM3->PSC = ((SystemCoreClock / 2) / TIMER_COUNTER_FREQ) - 1;
 
 	// Counting direction: 0 = up-counting, 1 = down-counting (Timer Control Register 1)
 	TIM3->CR1 &= ~TIM_CR1_DIR; 

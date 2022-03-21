@@ -13,9 +13,9 @@
 #include "board.h"
 #include "processor_hal.h"
 
-#define TIMER_RUNNING_FREQ  				5000           				//Frequency (in Hz)
+#define TIMER_COUNTER_FREQ  				5000           				//Frequency (in Hz)
 #define PWM_PULSE_WIDTH_SECONDS				2						//2s
-#define PWM_PULSE_WIDTH_TICKS				10000 					//((PWM_PULSE_WIDTH_SECONDS)/(1/TIMER_RUNNING_FREQ))		//Period in timer ticks
+#define PWM_PULSE_WIDTH_TICKS				10000 					//((PWM_PULSE_WIDTH_SECONDS)/(1/TIMER_COUNTER_FREQ))		//Period in timer ticks
 #define PWM_PERCENT2TICKS_DUTYCYCLE(value)	(uint16_t)(value*PWM_PULSE_WIDTH_TICKS/100)				//Duty Cycle on time in timer ticks
 #define PWM_DUTYCYCLE_CHANGE(value) 			TIM3->CCR2=(uint16_t)value									//Change PWM dutycyle
 
@@ -72,7 +72,7 @@ void hardware_init(void) {
 	/* Compute the prescaler value
 	   Set the clock prescaler to 50kHz
 	   SystemCoreClock is the system clock frequency */
-	TIM3->PSC = ((SystemCoreClock / 2) / TIMER_RUNNING_FREQ) - 1;
+	TIM3->PSC = ((SystemCoreClock / 2) / TIMER_COUNTER_FREQ) - 1;
 
 	// Counting direction: 0 = up-counting, 1 = down-counting (Timer Control Register 1)
 	TIM3->CR1 &= ~TIM_CR1_DIR; 
