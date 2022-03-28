@@ -58,7 +58,7 @@ void hardware_init(void) {
 	// Enable GPIOC Clock
 	__GPIOB_CLK_ENABLE();
 
-    GPIOB->OSPEEDR |= (GPIO_SPEED_FAST << 2);		//Set fast speed.
+    GPIOB->OSPEEDR |= (GPIO_SPEED_FAST << (5 * 2));		//Set fast speed.
 	GPIOB->PUPDR &= ~(0x03 << (5 * 2));				//Clear bits for no push/pull
 	GPIOB->MODER &= ~(0x03 << (5 * 2));				//Clear bits
 	GPIOB->MODER |= (GPIO_MODE_AF_PP << (5 * 2));  	//Set Alternate Function Push Pull Mode
