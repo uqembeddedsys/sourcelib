@@ -2,9 +2,18 @@
   ******************************************************************************
   * @file    console/main.c
   * @author  MDS
-  * @date    27112020
+  * @date    27032022
   * @brief   Nucleo debug log example. Prints to the console, every 2 seconds.
-  *          Run serial terminal program script - kermusb to view the output
+  *          Will detect and print key press to console
+  * 
+  *          VM: Run serial terminal program script - kermusb
+  * 
+  *          Windows Native Installation: use Putty (Serial Connection/Port) with baudrate 115200.
+  *          Linux/OSX Native Installation: run in a terminal window:
+  *          kermusb
+  *          Alternate Linux/OSX, run in a terminal windows:
+  *          OSX: screen /dev/tty.usXXXXXXXX 115200
+  *          LINUX: screen /dev/ttyACMx 115200
   ******************************************************************************
   */
 
@@ -43,7 +52,7 @@ int main(void)  {
 
       BRD_LEDGreenToggle();
 
-      debug_log("Character: %c - ASCII Table value: %d\n\r", recvChar);
+      debug_log("Character: %c - ASCII Table value: %d\n\r", recvChar, recvChar);
     }
 
 	}

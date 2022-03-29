@@ -52,7 +52,7 @@ int main(void)  {
 
       BRD_LEDGreenToggle();
 
-      debug_log("Character: %c - ASCII Table value: %d\n\r", recvChar);
+      debug_log("Character: %c - ASCII Table value: %d\n\r", recvChar, recvChar);
     }
 
 	}

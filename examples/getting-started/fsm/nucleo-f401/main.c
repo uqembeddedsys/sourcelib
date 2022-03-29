@@ -61,8 +61,8 @@ int fsm_processing(int current) {
 
     case S0:    //First state
 
-      //Check if pushbutton is low.
-      if ((GPIOC->IDR & (0x0001 << 13)) == 0){
+      //Check if pushbutton is pressed.
+      if ((GPIOC->IDR & (0x0001 << 13)) == (0x0001 << 13)){
         nextState = S1;
 
       } else {  
@@ -75,8 +75,8 @@ int fsm_processing(int current) {
 
     case S1:
 
-      //Check if pushbutton is low.
-      if ((GPIOC->IDR & (0x0001 << 13)) == 0){
+      //Check if pushbutton is pressed.
+      if ((GPIOC->IDR & (0x0001 << 13)) == (0x0001 << 13)){
         nextState = S2;
 
       } else {  
@@ -90,7 +90,7 @@ int fsm_processing(int current) {
 
     case S2:
 
-      //Check if pushbutton is low.
+      //Check if pushbutton is released.
       if ((GPIOC->IDR & (0x0001 << 13)) == 0){
         nextState = S3;
         
