@@ -6,11 +6,20 @@
   * @brief   Simple Finite State Machine (FSM) example to Pushbutton sequence detect. 
   *          If pushbutton is pressed for 3s, the LED will turn on for 2 seconds and 
   *          then turn off. The pushbutton must be released. Otherwise. 
+  * 
+  *          DEBUG Output
+  *          Uncomment #define DEBUG to view debug output
+  *          Use a serial terminal (e.g. kermusb on the VM) to view the output.
   ******************************************************************************
   */
 
 #include "board.h"
 #include "processor_hal.h"
+
+//#define DEBUG     //Uncomment to enable debug messages
+#ifdef DEBUG
+#include "debug_log.h"
+#endif
 
 // States used
 #define S0  0
@@ -43,6 +52,9 @@ int main(void)  {
 		  
       currentState = fsm_processing(currentState);
 
+#ifdef DEBUG
+      debug_log("S%d\n\r", currentState);
+#endif
       prev_tick =  HAL_GetTick();
     }
 	}
@@ -62,7 +74,7 @@ int fsm_processing(int current) {
     case S0:    //First state
 
       //Check if pushbutton is pressed.
-      if ((GPIOC->IDR & (0x0001 << 13)) == (0x0001 << 13)){
+      if ((GPIOC->IDR & (0x0001 << 13)) == 0){
         nextState = S1;
 
       } else {  
@@ -76,7 +88,7 @@ int fsm_processing(int current) {
     case S1:
 
       //Check if pushbutton is pressed.
-      if ((GPIOC->IDR & (0x0001 << 13)) == (0x0001 << 13)){
+      if ((GPIOC->IDR & (0x0001 << 13)) == 0){
         nextState = S2;
 
       } else {  
@@ -91,7 +103,7 @@ int fsm_processing(int current) {
     case S2:
 
       //Check if pushbutton is released.
-      if ((GPIOC->IDR & (0x0001 << 13)) == 0){
+      if ((GPIOC->IDR & (0x0001 << 13)) == (0x0001 << 13)){
         nextState = S3;
         
       } else {  
@@ -134,6 +146,10 @@ void hardware_init(void) {
 
 	// Turn off LEDs
 	BRD_LEDGreenOff();
+
+#ifdef DEBUG
+  BRD_debuguart_init();  //Initialise UART for debug log output
+#endif
 
   // Enable GPIO Clock
 	__GPIOC_CLK_ENABLE();
