@@ -29,7 +29,7 @@ void takeTask( void );
 
 // Task Priorities
 #define GIVETASK_PRIORITY					( tskIDLE_PRIORITY + 2 )
-#define TAKETASK_PRIORITY					( tskIDLE_PRIORITY + 2 )
+#define TAKETASK_PRIORITY					( tskIDLE_PRIORITY + 1 )
 
 // Task Stack Allocations
 #define GIVETASK_STACK_SIZE		( configMINIMAL_STACK_SIZE * 2 )

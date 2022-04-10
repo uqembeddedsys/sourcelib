@@ -91,16 +91,16 @@ void senderTask( void ) {
 
 	for (;;) {
 
-		// Determine action to take based on counter lower 3 bit values.
+		// Determine action to take based on counter lower 2 bit values.
 		// Set on if counter is 1.
-		if ((count & 0x07) == (1 << 0)) {
+		if ((count & 0x03) == (1 << 0)) {
 			onVal = 1;
 		} else {
 			onVal = 0;
 		}
 		
 		//Set off if counter is 2.
-		if ((count & 0x07) == (1 << 1)) {
+		if ((count & 0x03) == (1 << 1)) {
 			offVal = 1;
 		} else {
 			offVal = 0;

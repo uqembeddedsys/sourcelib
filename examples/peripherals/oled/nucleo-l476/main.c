@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
- * @file    i2c/main.c
+ * @file    peripherals/oled/main.c
  * @author  MDS
  * @date    03042021
- * @brief   I2C example with the MMA8462Q. Reads and checks the WHO_AM_I 
- *          register (Address: 0x0D) for the set value (0x2A). If the value is
- *          correct, the green LED is toggled.
- *  		REFERENCE: MMA8462 Datasheet (p15)
- * 			Uses D15 (SCL) & D14 (SDA)
+ * @brief   I2C example with the SSD1306 OLED Display (0.91 inch, 128x32 pixel). 
+ * 			A boundary box, text and a moving cursor is shown on the OLED.
+ *          The Green LED will toggle to indicate periodic writing of the OLED.
+ *  		REFERENCE: SSD1306 Datasheet
+ * 			Uses D15 (I2C_A_SCL) & D14 (I2C_A_SDA)
  *			Uses the following macros:
  * 				 MODIFY_REG( Register, clear mask (bits to clear), set mask (bits to set))
  *               WRITE_REG( Register, value to set)
@@ -19,6 +19,10 @@
  */
 #include "board.h"
 #include "processor_hal.h"
+#include "oled_pixel.h"
+#include "oled_string.h"
+#include "fonts.h"
+
 
 #define I2C_DEV_SDA_PIN		9
 #define I2C_DEV_SCL_PIN		8
@@ -29,9 +33,6 @@
 #define I2C_DEV				I2C1
 #define I2C_DEV_CLOCKSPEED 	100000
 
-#define MMA8452Q_ADDRESS		0x1D << 1		//MMA8452Q I2C address
-#define MMA8452Q_WHO_AM_I_REG	0x0D		//MMA8452Q "Who am I" register address
-
 void hardware_init(void);
 
 /*
@@ -41,68 +42,53 @@ int main(void) {
 
 	uint8_t read_reg_val;
 	uint32_t status;
+	int i, dx,j;
 
 	HAL_Init(); 		// Initialise Board
 	hardware_init(); 	// Initialise hardware peripherals
 
+	dx = 0;
+
 	// Cyclic Executive (CE) loop
 	while (1) {
 
-		CLEAR_BIT(I2C_DEV->SR1, I2C_SR1_AF);	//Clear Flags
-		SET_BIT(I2C_DEV->CR1, I2C_CR1_START);	// Generate the START condition
+		//Clear Screen
+		
+		ssd1306_Fill(Black);
 
-		// Wait the START condition has been correctly sent 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_SB) == 0);
+		//Draw Horizontal lines of boundary box
+		for (i=0; i < SSD1306_WIDTH; i++) {
 
-		// Send Peripheral Device Write address 
-		WRITE_REG(I2C_DEV->DR, I2C_7BIT_ADD_WRITE(MMA8452Q_ADDRESS));
+			ssd1306_DrawPixel(i, 0, SSD1306_WHITE);					//top line
+			ssd1306_DrawPixel(i, SSD1306_HEIGHT-1, SSD1306_WHITE);	//bottom line
+		}
 
-		// Wait for address to be acknowledged 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_ADDR) == 0);
+		//Draw Vertical lines of boundary box
+		for (i=0; i < SSD1306_HEIGHT; i++) {
 
-		// Clear ADDR Flag by reading SR1 and SR2.
-		status = READ_REG(I2C_DEV->SR2);
+			ssd1306_DrawPixel(0, i, SSD1306_WHITE);					//left line
+			ssd1306_DrawPixel(SSD1306_WIDTH-1, i, SSD1306_WHITE);	//right line
 
-		// Send Read Register Address - WHO_AM_I Register Address 
-		WRITE_REG(I2C_DEV->DR, MMA8452Q_WHO_AM_I_REG);
+		}
 
-		// Wait until register Address byte is transmitted 
-		while(((READ_REG(I2C_DEV->SR1) & I2C_SR1_TXE) == 0) && ((READ_REG(I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
+		//Draw moving cursor
+		for (i=0; i < 10; i++) {
 
-		// Generate the START condition, again 
-		SET_BIT(I2C_DEV->CR1, I2C_CR1_START);
+			if ((i + dx) < SSD1306_WIDTH) {
+				ssd1306_DrawPixel(i+dx, (SSD1306_HEIGHT/2)+10, SSD1306_WHITE);
+			}
+		}
 
-		// Wait the START condition has been correctly sent 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_SB) == 0);
+		// Advance moving cursor
+		dx = (dx + 10)%SSD1306_WIDTH;
 
-		// Send Read Address 
-		WRITE_REG(I2C_DEV->DR, I2C_7BIT_ADD_READ(MMA8452Q_ADDRESS));
+		//Show text and udpate screen
+		ssd1306_SetCursor(10,10);
+		ssd1306_WriteString("CSSE3010 OLED Test", Font_6x8, SSD1306_WHITE);
+		ssd1306_UpdateScreen();
 
-		// Wait for address to be acknowledged 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_ADDR) == 0);
-
-		//Clear ADDR Flag by reading SR1 and SR2.
-		status = READ_REG(I2C_DEV->SR2);
-				
-		// Wait to read 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_RXNE) == 0);
-
-		// Read received value 
-		read_reg_val = READ_REG(I2C_DEV->DR);
-
-		// Generate NACK 
-		CLEAR_BIT(I2C_DEV->CR1, I2C_CR1_ACK);
-
-		// Generate the STOP condition 
-		SET_BIT(I2C_DEV->CR1, I2C_CR1_STOP);
-
-		//Check WHO_AM_I Register value is 0x2A
-		if (read_reg_val == 0x2A) {
-			BRD_LEDGreenToggle();
-		} 
-
+		BRD_LEDGreenToggle();	//Toggle green LED on/off
 		HAL_Delay(1000);		//Delay for 1s (1000ms)
-
 	}
 }
 
@@ -126,7 +112,7 @@ void hardware_init(void) {
 	// IMPORTANT NOTE: SCL Must be Initialised BEFORE SDA
 	//******************************************************
 
-	//Clear and Set Alternate Function for pin (upper ARF register) 
+	//Clear and Set Alternate Function for pin (lower ARF register) 
 	MODIFY_REG(I2C_DEV_GPIO->AFR[1], ((0x0F) << ((I2C_DEV_SCL_PIN-8) * 4)) | ((0x0F) << ((I2C_DEV_SDA_PIN-8)* 4)), ((I2C_DEV_GPIO_AF << ((I2C_DEV_SCL_PIN-8) * 4)) | (I2C_DEV_GPIO_AF << ((I2C_DEV_SDA_PIN-8)) * 4)));
 	
 	//Clear and Set Alternate Function Push Pull Mode
@@ -171,4 +157,6 @@ void hardware_init(void) {
 
   	// Enable the selected I2C peripheral
 	SET_BIT(I2C_DEV->CR1, I2C_CR1_PE);
+
+	ssd1306_Init();	//Initialise SSD1306 OLED.
 }

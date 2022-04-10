@@ -27,6 +27,7 @@ SemaphoreHandle_t pbSemaphore;	// Semaphore for pushbutton interrupt
 static void hardware_init();
 void giveTask( void );
 void takeTask( void );
+void pb_callback(uint16_t GPIO_Pin);
 
 // Task Priorities
 #define GIVETASK_PRIORITY					( tskIDLE_PRIORITY + 2 )
@@ -166,11 +167,10 @@ static void hardware_init( void ) {
 	//select trigger source (port c, pin 13) on EXTICR4.
 	SYSCFG->EXTICR[3] &= ~SYSCFG_EXTICR4_EXTI13;
 	SYSCFG->EXTICR[3] |= SYSCFG_EXTICR4_EXTI13_PC;
-	SYSCFG->EXTICR[3] &= ~(0x000F);
 
-	EXTI->RTSR |= EXTI_RTSR_TR13;	//enable rising dedge
-	EXTI->FTSR &= ~EXTI_FTSR_TR13;	//disable falling edge
-	EXTI->IMR |= EXTI_IMR_IM13;		//Enable external interrupt
+	EXTI->RTSR1 |= EXTI_RTSR1_RT13;	//enable rising dedge
+	EXTI->FTSR1 &= ~EXTI_FTSR1_FT13;	//disable falling edge
+	EXTI->IMR1 |= EXTI_IMR1_IM13;		//Enable external interrupt
 
 	//Enable priority (10) and interrupt callback. Do not set a priority lower than 5.
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 10, 0);
@@ -182,13 +182,11 @@ static void hardware_init( void ) {
 /*
  * Pushbutton callback function
  */
-void Pb_callback(uint16_t GPIO_Pin)
+void pb_callback(uint16_t GPIO_Pin)
 {
 	BaseType_t xHigherPriorityTaskWoken;
 
 	if (GPIO_Pin == 13) {
-
-		EXTI->PR |= EXTI_PR_PR13;	//Clear interrupt flag.
 		
 		// Toggle Green LED
 		BRD_LEDGreenToggle();
@@ -211,6 +209,15 @@ void Pb_callback(uint16_t GPIO_Pin)
  */ 
 void EXTI15_10_IRQHandler(void) {
 
-	Pb_callback(13);   // Callback for C13
+	NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
+
+	// PR: Pending register
+	if ((EXTI->PR1 & EXTI_PR1_PIF13) == EXTI_PR1_PIF13) {
+
+		// cleared by writing a 1 to this bit
+		EXTI->PR1 |= EXTI_PR1_PIF13;	//Clear interrupt flag.
+
+		pb_callback(13);   // Callback for C13
+	}
 }
 

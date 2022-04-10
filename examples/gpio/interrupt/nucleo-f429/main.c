@@ -98,6 +98,4 @@ void EXTI15_10_IRQHandler(void) {
 
 		pb_callback(13);   // Callback for C13
 	}
-
-	
 }

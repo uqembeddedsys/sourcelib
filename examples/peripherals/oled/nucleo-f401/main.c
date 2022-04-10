@@ -5,7 +5,7 @@
  * @date    03042021
  * @brief   I2C example with the SSD1306 OLED Display (0.91 inch, 128x32 pixel). 
  * 			A boundary box, text and a moving cursor is shown on the OLED.
- *          The Blue LED will toggle to indicate periodic reading of the 
+ *          The Green LED will toggle to indicate periodic writing of the OLED.
  *  		REFERENCE: SSD1306 Datasheet
  * 			Uses D15 (I2C_A_SCL) & D14 (I2C_A_SDA)
  *			Uses the following macros:
@@ -87,7 +87,7 @@ int main(void) {
 		ssd1306_WriteString("CSSE3010 OLED Test", Font_6x8, SSD1306_WHITE);
 		ssd1306_UpdateScreen();
 
-		BRD_LEDBlueToggle();	//Toggle blue LED on/off
+		BRD_LEDGreenToggle();	//Toggle green LED on/off
 		HAL_Delay(1000);		//Delay for 1s (1000ms)
 	}
 }
@@ -103,9 +103,7 @@ void hardware_init(void) {
 	BRD_LEDInit();	//Initialise LEDs
 
 	// Turn off LEDs
-	BRD_LEDRedOff();
 	BRD_LEDGreenOff();
-	BRD_LEDBlueOff();
 
 	// Enable GPIO clock
 	I2C_DEV_GPIO_CLK();

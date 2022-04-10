@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    os/fr_queue/main.c
+  * @file    os/fr_streambuffer/main.c
   * @author  MDS
-  * @date    22032018
-  * @brief   FreeRTOS queue demonstration.Creates a queue to
+  * @date    22032022
+  * @brief   FreeRTOS queue demonstration.Creates a streambufferto
   *			 to send an item from one task to another. Output is seen on the 
-  *			 Greeb LED.
+  *			 Green LED.
   *
   *			 NOTE: THE IDLE TASK MUST BE DISABLED.
   ******************************************************************************
@@ -33,7 +33,7 @@ void receiverTask( void );
 
 // Task Priorities 
 #define SENDERTASK_PRIORITY					( tskIDLE_PRIORITY + 2 )
-#define RECEIVERTASK_PRIORITY				( tskIDLE_PRIORITY + 2 )
+#define RECEIVERTASK_PRIORITY				( tskIDLE_PRIORITY + 1 )
 
 // Task Stack Allocations 
 #define SENDERTASK_STACK_SIZE		( configMINIMAL_STACK_SIZE * 2 )
@@ -75,10 +75,8 @@ void senderTask( void ) {
 
 	unsigned char onVal;
 	unsigned char offVal;
-	int count;
+	int count = 0;
 	struct Message SendMessage;
-
-	size_t xReceivedBytes;
 
 	const size_t xStreamBufferSizeBytes = 10, xTriggerLevel = 1;
 
@@ -91,28 +89,27 @@ void senderTask( void ) {
 
 		// Determine action to take based on counter lower 3 bit values.
 		// Set on if counter is 1.
-		if ((count & 0x07) == (1 << 0)) {
+		if ((count & 0x03) == (1 << 0)) {
 			onVal = 1;
 		} else {
 			onVal = 0;
 		}
 		
 		//Set off if counter is 2.
-		if ((count & 0x07) == (1 << 1)) {
+		if ((count & 0x03) == (1 << 1)) {
 			offVal = 1;
 		} else {
 			offVal = 0;
 		}
-		
-		if (MessageQueue != NULL) {	// Check if queue exists 
 
-			// Send message to the front of the queue - wait atmost 10 ticks 
-			SendMessage.on = onVal;
-			SendMessage.off = offVal;
+		count++;	//Increment counter to set next action.
 
-			xQueueSendToFront(MessageQueue, ( void * ) &SendMessage, ( portTickType ) 10 );
-		}
+		// Send message to the front of the queue - wait atmost 10 ticks 
+		SendMessage.on = onVal;
+		SendMessage.off = offVal;
+		SendMessage.Sequence_Number = count;
 
+		xStreamBufferSend(xStreamBuffer, ( void * ) &SendMessage, sizeof(SendMessage), ( portTickType ) 10 );
 
 		// Wait for 1000ms 
 		vTaskDelay(1000);
@@ -126,26 +123,25 @@ void senderTask( void ) {
 void receiverTask( void ) {
 
 	struct Message RecvMessage;
+	size_t xReceivedBytes;
 
 	BRD_LEDGreenOff();
 
 	for (;;) {
 
-		if (MessageQueue != NULL) {	// Check if queue exists
+		// Check for item received - block atmost for 10 ticks
+		xReceivedBytes = xStreamBufferReceive( xStreamBuffer, &RecvMessage, sizeof(RecvMessage), 10 );
+		if (xReceivedBytes > 0) {
 
-			// Check for item received - block atmost for 10 ticks
-			if (xQueueReceive( MessageQueue, &RecvMessage, 10 )) {
+			// Turn green LED on
+			if (RecvMessage.on) {
+				BRD_LEDGreenOn();
+			}
 
-				// Turn green LED on
-				if (RecvMessage.on) {
-					BRD_LEDGreenOn();
-				}
-
-				// Turn green off
-				if (RecvMessage.off) {
-					BRD_LEDGreenOff();
-				}
-        	}
+			// Turn green off
+			if (RecvMessage.off) {
+				BRD_LEDGreenOff();
+			}
 		}
 
 		// Delay for 10ms
@@ -165,12 +161,3 @@ void hardware_init( void ) {
 	portENABLE_INTERRUPTS();	//Enable interrupts
 
 }
-
-/*
- * Interrupt handler for EXTI 15 to 10 IRQ Handler
- */ 
-void EXTI15_10_IRQHandler(void) {
-
-	Pb_callback(13);   // Callback for C13
-}
-
