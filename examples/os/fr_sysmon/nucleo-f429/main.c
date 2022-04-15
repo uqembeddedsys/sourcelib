@@ -102,7 +102,7 @@ void Task1_Task( void ) {
 		vTaskDelay(3);			//Extra Delay for 3ms	
 		SYSMON_CHAN0_CLR();			//Clear LA Channel 0	
         
-		vTaskDelay(3);			//Mandatory delay ONLY for 	
+		vTaskDelay(1);			//Mandatory delay ONLY for 	
 											//Task 1&2 (REMOVE FOR TASK 3)
 	}
 }
@@ -121,7 +121,7 @@ void Task2_Task( void ) {
 		vTaskDelay(3);			//Extra Delay for 3ms	
 		SYSMON_CHAN1_CLR();			//Clear LA Channel 0	
         
-		vTaskDelay(3);			//Mandatory delay ONLY for 	
+		vTaskDelay(1);			//Mandatory delay ONLY for 	
 											//Task 1&2 (REMOVE FOR TASK 3)
 	}
 }

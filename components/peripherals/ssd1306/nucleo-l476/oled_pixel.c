@@ -20,14 +20,6 @@
 #define OLED_HAL_DELAY(x)   HAL_Delay(x)
 #endif
 
-#ifndef OLED_I2C_DEV
-#define OLED_I2C_DEV I2C1
-#endif
-
-#ifndef OLED_I2C_DEV_ADDR
-#define OLED_I2C_DEV_ADDR 0x3C
-#endif
-
 void ssd1306_Reset(void) {
     /* for I2C - do nothing */
 }
@@ -38,35 +30,36 @@ void ssd1306_WriteCommand(uint8_t byte) {
     uint32_t status;
     //HAL_I2C_Mem_Write(&I2CHandle, (ADDR << 1), 0x00, sizeof(uint8_t), &byte, sizeof(uint8_t), HAL_MAX_DELAY);
 
-    CLEAR_BIT(OLED_I2C_DEV->SR1, I2C_SR1_AF);	//Clear Flags
-	SET_BIT(OLED_I2C_DEV->CR1, I2C_CR1_START);	// Generate the START condition
+    //CLEAR_BIT(OLED_I2C_DEV->SR1, I2C_SR1_AF);	//Clear Flags
+	SET_BIT(OLED_I2C_DEV->CR2, I2C_CR2_START);	// Generate the START condition
 
 	// Wait the START condition has been correctly sent 
-	while((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_SB) == 0);
+	//while((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_SB) == 0);
+    while((OLED_I2C_DEV->ISR & I2C_ISR_TXIS) == 0 && ((OLED_I2C_DEV->ISR & I2C_ISR_NACKF) == 0) ); 
 
 	// Send Peripheral Device Write address 
-	WRITE_REG(OLED_I2C_DEV->DR, I2C_7BIT_ADD_WRITE((OLED_I2C_DEV_ADDR << 1)));
+	WRITE_REG(OLED_I2C_DEV->TXDR, ((OLED_I2C_DEV_ADDR << 1) | I2C_CR2_RD_WRN));
 
 	// Wait for address to be acknowledged 
-	while((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_ADDR) == 0);
+	while((READ_REG(OLED_I2C_DEV->ISR) & I2C_ISR_TXIS) == 0);
 
 	//Clear ADDR Flag by reading SR1 and SR2.
-	status = READ_REG(OLED_I2C_DEV->SR2);
+	//status = READ_REG(OLED_I2C_DEV->ISR);
 
 	// Send Control byte, set Co bit to 1 (control words) and D/C to 0 (no data), followed by '000000'
-	WRITE_REG(OLED_I2C_DEV->DR, 0x80);
+	WRITE_REG(OLED_I2C_DEV->TXDR, 0x80);
 
     // Wait for control byte to transmit
-    while(((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_TXE) == 0) && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
+    while((READ_REG(OLED_I2C_DEV->ISR) & I2C_ISR_TXIS) == 0); // && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
 
     // Send command 
-	WRITE_REG(OLED_I2C_DEV->DR, byte);
+	WRITE_REG(OLED_I2C_DEV->TXDR, byte);
 
     // Wait for command byte to transmit
-    while(((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_TXE) == 0) && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
+    while((READ_REG(OLED_I2C_DEV->ISR) & I2C_ISR_TXIS) == 0); // && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
 
 	// Generate the STOP condition 
-	SET_BIT(OLED_I2C_DEV->CR1, I2C_CR1_STOP);
+	SET_BIT(OLED_I2C_DEV->CR2, I2C_CR2_STOP);
 
     //OLED_HAL_DELAY(10);
     //*/
@@ -79,38 +72,39 @@ void ssd1306_WriteData(uint8_t* buffer, size_t buff_size) {
     uint32_t status;
     int i;
 
-    CLEAR_BIT(OLED_I2C_DEV->SR1, I2C_SR1_AF);	//Clear Flags
-	SET_BIT(OLED_I2C_DEV->CR1, I2C_CR1_START);	// Generate the START condition
+    //CLEAR_BIT(OLED_I2C_DEV->SR1, I2C_SR1_AF);	//Clear Flags
+	SET_BIT(OLED_I2C_DEV->CR2, I2C_CR2_START);	// Generate the START condition
 
 	// Wait the START condition has been correctly sent 
-	while((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_SB) == 0);
+	//while((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_SB) == 0);
+    while((OLED_I2C_DEV->ISR & I2C_ISR_TXIS) == 0 && ((OLED_I2C_DEV->ISR & I2C_ISR_NACKF) == 0) ); 
 
 	// Send Peripheral Device Write address 
-	WRITE_REG(OLED_I2C_DEV->DR, I2C_7BIT_ADD_WRITE((OLED_I2C_DEV_ADDR << 1)));
+	WRITE_REG(OLED_I2C_DEV->TXDR, ((OLED_I2C_DEV_ADDR << 1) | I2C_CR2_RD_WRN));
 
 	// Wait for address to be acknowledged 
-	while((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_ADDR) == 0);
+	while((READ_REG(OLED_I2C_DEV->ISR) & I2C_ISR_TXIS) == 0);
 
 	//Clear ADDR Flag by reading SR1 and SR2.
-	status = READ_REG(OLED_I2C_DEV->SR2);
+	//status = READ_REG(OLED_I2C_DEV->ISR);
 
     // Send Control byte, set Co bit to 0 and D/C to 1 (data only), followed by '000000'
-    WRITE_REG(OLED_I2C_DEV->DR, 0x40);
+    WRITE_REG(OLED_I2C_DEV->TXDR, 0x40);
 
     // Wait for first control byte to send.
-    while(((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_TXE) == 0) && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
+    while((READ_REG(OLED_I2C_DEV->ISR) & I2C_ISR_TXIS) == 0); // && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
 
     // Send data byte 
     for (i=0; i < buff_size; i++ ) {
         
-        WRITE_REG(OLED_I2C_DEV->DR, buffer[i]);
+        WRITE_REG(OLED_I2C_DEV->TXDR, buffer[i]);
 
         // Wait for data byte to be sent
-        while(((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_TXE) == 0) && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
+        while((READ_REG(OLED_I2C_DEV->ISR) & I2C_ISR_TXIS) == 0); // && ((READ_REG(OLED_I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
     }
 
     // Generate stop condition
-    SET_BIT(OLED_I2C_DEV->CR1, I2C_CR1_STOP);
+    SET_BIT(OLED_I2C_DEV->CR2, I2C_CR2_STOP);
 
     //OLED_HAL_DELAY(10);
     //*/
@@ -368,7 +362,7 @@ HAL_StatusTypeDef ssd1306_getResp() {
 	//HAL_StatusTypeDef sts = HAL_I2C_Mem_Write(&I2CHandle, (0x00 << 1), 0x00, sizeof(uint8_t), 0x00, sizeof(uint8_t), 1000);
     HAL_StatusTypeDef sts;
     uint32_t status;
-
+/*
     CLEAR_BIT(OLED_I2C_DEV->SR1, I2C_SR1_AF);	//Clear Flags
 	SET_BIT(OLED_I2C_DEV->CR1, I2C_CR1_START);	// Generate the START condition
 
@@ -417,7 +411,7 @@ HAL_StatusTypeDef ssd1306_getResp() {
 		// Generate the STOP condition 
 		SET_BIT(OLED_I2C_DEV->CR1, I2C_CR1_STOP);
 
-
+//*/
 	return sts;
 
 }

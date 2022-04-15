@@ -18,6 +18,14 @@
 #include <string.h>  // For memcpy
 #include "fonts.h"
 
+#ifndef OLED_I2C_DEV
+#define OLED_I2C_DEV I2C1
+#endif
+
+#ifndef OLED_I2C_DEV_ADDR
+#define OLED_I2C_DEV_ADDR 0x3C
+#endif
+
 
 #define SSD1306_WIDTH 128 // OLED display width, in pixels
 #define SSD1306_HEIGHT 32 // OLED display height, in pixels

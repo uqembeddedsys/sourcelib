@@ -2,7 +2,7 @@
  ******************************************************************************
  * @file    i2c/main.c
  * @author  MDS
- * @date    03042021
+ * @date    11042022
  * @brief   I2C example with the MMA8462Q. Reads and checks the WHO_AM_I 
  *          register (Address: 0x0D) for the set value (0x2A). If the value is
  *          correct, the green LED is toggled.
@@ -19,6 +19,7 @@
  */
 #include "board.h"
 #include "processor_hal.h"
+#include "debug_log.h"
 
 #define I2C_DEV_SDA_PIN		9
 #define I2C_DEV_SCL_PIN		8
@@ -31,6 +32,8 @@
 
 #define MMA8452Q_ADDRESS		0x1D << 1		//MMA8452Q I2C address
 #define MMA8452Q_WHO_AM_I_REG	0x0D		//MMA8452Q "Who am I" register address
+#define WRITE_SIZE				1		//Number of bytes to write
+#define READ_SIZE				1		//Number of bytes to read
 
 void hardware_init(void);
 
@@ -40,7 +43,6 @@ void hardware_init(void);
 int main(void) {
 
 	uint8_t read_reg_val;
-	uint32_t status;
 
 	HAL_Init(); 		// Initialise Board
 	hardware_init(); 	// Initialise hardware peripherals
@@ -48,53 +50,40 @@ int main(void) {
 	// Cyclic Executive (CE) loop
 	while (1) {
 
-		CLEAR_BIT(I2C_DEV->SR1, I2C_SR1_AF);	//Clear Flags
-		SET_BIT(I2C_DEV->CR1, I2C_CR1_START);	// Generate the START condition
+		//Clear Flags
+		CLEAR_BIT(I2C_DEV->CR2, (I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_STOP));
+		
+		//Set for Write Operation
+		CLEAR_BIT(I2C_DEV->CR2, I2C_CR2_RD_WRN);
 
-		// Wait the START condition has been correctly sent 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_SB) == 0);
+		//Set MMA8452Q Device address and Size of data to write (1). Size excludes device address.
+		SET_BIT(I2C_DEV->CR2, (uint32_t)(((uint32_t)MMA8452Q_ADDRESS & I2C_CR2_SADD) | ((WRITE_SIZE << 16 ) & I2C_CR2_NBYTES)));
+		SET_BIT(I2C_DEV->CR2, I2C_CR2_START);	// Generate the START condition
 
-		// Send Peripheral Device Write address 
-		WRITE_REG(I2C_DEV->DR, I2C_7BIT_ADD_WRITE(MMA8452Q_ADDRESS));
+		//Write MMA8452Q Register address 
+		I2C_DEV->TXDR =  MMA8452Q_WHO_AM_I_REG & I2C_TXDR_TXDATA;
 
-		// Wait for address to be acknowledged 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_ADDR) == 0);
+		//Wait for Write Operation to complete
+		while( (I2C_DEV->ISR & I2C_ISR_TXE) == 0 );
 
-		// Clear ADDR Flag by reading SR1 and SR2.
-		status = READ_REG(I2C_DEV->SR2);
+		//Set for Read Operation
+		SET_BIT(I2C_DEV->CR2, I2C_CR2_RD_WRN);
 
-		// Send Read Register Address - WHO_AM_I Register Address 
-		WRITE_REG(I2C_DEV->DR, MMA8452Q_WHO_AM_I_REG);
-
-		// Wait until register Address byte is transmitted 
-		while(((READ_REG(I2C_DEV->SR1) & I2C_SR1_TXE) == 0) && ((READ_REG(I2C_DEV->SR1) & I2C_SR1_BTF) == 0));
-
-		// Generate the START condition, again 
-		SET_BIT(I2C_DEV->CR1, I2C_CR1_START);
-
-		// Wait the START condition has been correctly sent 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_SB) == 0);
-
-		// Send Read Address 
-		WRITE_REG(I2C_DEV->DR, I2C_7BIT_ADD_READ(MMA8452Q_ADDRESS));
-
-		// Wait for address to be acknowledged 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_ADDR) == 0);
-
-		//Clear ADDR Flag by reading SR1 and SR2.
-		status = READ_REG(I2C_DEV->SR2);
+		//Set MMA8452Q Device address and Size of data to read (1). Size excludes device address.
+		SET_BIT(I2C_DEV->CR2, (uint32_t)(((uint32_t)MMA8452Q_ADDRESS & I2C_CR2_SADD) | ((READ_SIZE << 16 ) & I2C_CR2_NBYTES)));
+		SET_BIT(I2C_DEV->CR2, I2C_CR2_START);	// Generate the RE-START condition
 				
 		// Wait to read 
-		while((READ_REG(I2C_DEV->SR1) & I2C_SR1_RXNE) == 0);
+		while( (I2C_DEV->ISR & I2C_ISR_RXNE) == 0 );
 
 		// Read received value 
-		read_reg_val = READ_REG(I2C_DEV->DR);
+		read_reg_val = READ_REG(I2C_DEV->RXDR);
 
 		// Generate NACK 
-		CLEAR_BIT(I2C_DEV->CR1, I2C_CR1_ACK);
+		SET_BIT(I2C_DEV->CR2, I2C_CR2_NACK);
 
 		// Generate the STOP condition 
-		SET_BIT(I2C_DEV->CR1, I2C_CR1_STOP);
+		SET_BIT(I2C_DEV->CR2, I2C_CR2_STOP);
 
 		//Check WHO_AM_I Register value is 0x2A
 		if (read_reg_val == 0x2A) {
@@ -110,9 +99,6 @@ int main(void) {
  * Initialise Hardware
  */
 void hardware_init(void) {
-
-	uint32_t pclk1;
-	uint32_t freqrange;
 
 	BRD_LEDInit();	//Initialise LEDs
 
@@ -148,27 +134,49 @@ void hardware_init(void) {
 	// Disable the selected I2C peripheral
 	CLEAR_BIT(I2C_DEV->CR1, I2C_CR1_PE);
 
-  	pclk1 = HAL_RCC_GetPCLK1Freq();			// Get PCLK1 frequency
-  	freqrange = I2C_FREQRANGE(pclk1);		// Calculate frequency range 
+	//---------------------------- I2C TIMINGR Configuration ------------------
+	WRITE_REG(I2C_DEV->TIMINGR, 0);	
+	// Configure clock prescaler
+	// SysTimer = 80 MHz, PRESC = 7,  80MHz/(1 + 7) = 10 MHz
+	CLEAR_BIT(I2C_DEV->TIMINGR, I2C_TIMINGR_PRESC); // Clear the prescaler 
+	SET_BIT(I2C_DEV->TIMINGR, 7U << 28);           // Set clock prescaler to 7
+	// tSCL = tSYNC1 + tSYNC2 + {[(SCLH+1) + (SCLL+1)] x (PRESC+1) x tI2CCLK}
+	// SCL Frequency = 8 MHz / 100 = 80 kHz
+	// Configure SCL high, low period
+	SET_BIT(I2C_DEV->TIMINGR, 49U);       // SCLL: SCL low period (master mode) > 4.7 us
+	SET_BIT(I2C_DEV->TIMINGR, 49U << 8);  // SCLH: SCL high period (master mode) > 4.0 us	 
+	// Configure SDA setup, and hold time
+	SET_BIT(I2C_DEV->TIMINGR, 1U << 20);  // SCLDEL: Data setup time > 1.0 us
+	SET_BIT(I2C_DEV->TIMINGR, 2U << 16);  // SDADEL: Data hold time  > 1.25 us	
 
-  	//I2Cx CR2 Configuration - Configure I2Cx: Frequency range
-  	MODIFY_REG(I2C_DEV->CR2, I2C_CR2_FREQ, freqrange);
+	//---------------------------- Own address 1 register (I2C_OAR1) -----------
+	// I2C Own address1 and ack own address1 mode
+	// Before STM32 sends its start sequence, it listens to the I2C lines waiting for its address
+	// This is helpful if STM32 is used as slave
+	CLEAR_BIT(I2C_DEV->OAR1, I2C_OAR1_OA1EN);
+	WRITE_REG(I2C_DEV->OAR1, I2C_OAR1_OA1EN | MMA8452Q_ADDRESS); // 7-bit own address
+	
+	// Enable clock stretching
+	CLEAR_BIT(I2C_DEV->CR1, I2C_CR1_NOSTRETCH);
 
-	// I2Cx TRISE Configuration - Configure I2Cx: Rise Time
-  	MODIFY_REG(I2C_DEV->TRISE, I2C_TRISE_TRISE, I2C_RISE_TIME(freqrange, I2C_DEV_CLOCKSPEED));
-
-   	// I2Cx CCR Configuration - Configure I2Cx: Speed
-  	MODIFY_REG(I2C_DEV->CCR, (I2C_CCR_FS | I2C_CCR_DUTY | I2C_CCR_CCR), I2C_SPEED(pclk1, I2C_DEV_CLOCKSPEED, I2C_DUTYCYCLE_2));
-
-   	// I2Cx CR1 Configuration - Configure I2Cx: Generalcall and NoStretch mode
-  	MODIFY_REG(I2C_DEV->CR1, (I2C_CR1_ENGC | I2C_CR1_NOSTRETCH), (I2C_GENERALCALL_DISABLE| I2C_NOSTRETCH_DISABLE));
-
-   	// I2Cx OAR1 Configuration - Configure I2Cx: Own Address1 and addressing mode
-  	MODIFY_REG(I2C_DEV->OAR1, (I2C_OAR1_ADDMODE | I2C_OAR1_ADD8_9 | I2C_OAR1_ADD1_7 | I2C_OAR1_ADD0), I2C_ADDRESSINGMODE_7BIT);
-
-   	// I2Cx OAR2 Configuration - Configure I2Cx: Dual mode and Own Address2
-  	MODIFY_REG(I2C_DEV->OAR2, (I2C_OAR2_ENDUAL | I2C_OAR2_ADD2), I2C_DUALADDRESS_DISABLE);
+	// Disable own address 2
+	CLEAR_BIT(I2C_DEV->OAR1, I2C_OAR2_OA2EN);
+	
+	//---------------------------- I2Cx CR2 Configuration ----------------------
+	CLEAR_BIT(I2C_DEV->CR2, I2C_CR2_ADD10);  // 0 = 7-bit mode, 1 = 10-bit mode
+	
+	// Enable the AUTOEND by default, and enable NACK (should be disable only during Slave process 
+	// 1: Automatic end mode: a STOP condition is automatically sent when NBYTES data are transferred.
+	// The AUTOEND bit has no effect when the RELOAD bit is set.
+	SET_BIT(I2C_DEV->CR2, I2C_CR2_AUTOEND);
+	
+	// For slave mode: set NACK
+	// The bit is set by software, cleared by hardware when the NACK is sent, or when a STOP
+	// condition or an Address Matched is received, or when PE=0.
+	//I2C_DEV->CR2 |= I2C_CR2_NACK;
+	//---------------------------------------------------------------------------
 
   	// Enable the selected I2C peripheral
 	SET_BIT(I2C_DEV->CR1, I2C_CR1_PE);
+
 }
