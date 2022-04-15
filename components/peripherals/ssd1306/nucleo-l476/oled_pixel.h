@@ -23,7 +23,7 @@
 #endif
 
 #ifndef OLED_I2C_DEV_ADDR
-#define OLED_I2C_DEV_ADDR 0x3C
+#define OLED_I2C_DEV_ADDR 0x3C << 1
 #endif
 
 

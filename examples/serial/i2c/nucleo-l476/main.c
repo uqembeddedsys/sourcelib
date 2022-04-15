@@ -61,7 +61,7 @@ int main(void) {
 		SET_BIT(I2C_DEV->CR2, I2C_CR2_START);	// Generate the START condition
 
 		//Write MMA8452Q Register address 
-		I2C_DEV->TXDR =  MMA8452Q_WHO_AM_I_REG & I2C_TXDR_TXDATA;
+		WRITE_REG(I2C_DEV->TXDR, MMA8452Q_WHO_AM_I_REG & I2C_TXDR_TXDATA);
 
 		//Wait for Write Operation to complete
 		while( (I2C_DEV->ISR & I2C_ISR_TXE) == 0 );
@@ -74,7 +74,7 @@ int main(void) {
 		SET_BIT(I2C_DEV->CR2, I2C_CR2_START);	// Generate the RE-START condition
 				
 		// Wait to read 
-		while( (I2C_DEV->ISR & I2C_ISR_RXNE) == 0 );
+		while( (READ_REG(I2C_DEV->ISR) & I2C_ISR_RXNE) == 0 );
 
 		// Read received value 
 		read_reg_val = READ_REG(I2C_DEV->RXDR);
