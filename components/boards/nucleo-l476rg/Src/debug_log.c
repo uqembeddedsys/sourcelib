@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include "board.h"
+#include "processor_hal.h"
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
@@ -23,6 +24,12 @@ void debug_putc(char c) {
 }
 
 void debug_flush() {
+	//__HAL_UART_FLUSH_DRREGISTER(&UART_debug);
+	//SET_BIT(BRD_DEBUG_UART->RQR, UART_RXDATA_FLUSH_REQUEST);
+    //SET_BIT(BRD_DEBUG_UART->RQR, UART_TXDATA_FLUSH_REQUEST);
+
+			while((READ_REG(BRD_DEBUG_UART->ISR) & USART_ISR_TC) == 0);
+
 
 }
 

@@ -116,6 +116,7 @@ void cliTask(void) {
 
 				//Put new line and transmit buffer
 				debug_putc('\n');
+				//debug_flush();
 
 				/* Put null character in command input string. */
 				cInputString[InputIndex] = '\0';
@@ -123,7 +124,7 @@ void cliTask(void) {
 				xReturned = pdTRUE;
 
 				/* Process command input string. */
-				do {
+				while (xReturned != pdFALSE) {
 
 					/* Returns pdFALSE, when all strings have been returned */
 					xReturned = FreeRTOS_CLIProcessCommand( cInputString, pcOutputString, configCOMMAND_INT_MAX_OUTPUT_SIZE );
@@ -132,15 +133,18 @@ void cliTask(void) {
 					portENTER_CRITICAL();
 					for (i = 0; i < (int) strlen(pcOutputString); i++) {
 						debug_putc(*(pcOutputString + i));
+						debug_flush();
+
 					}
 					portEXIT_CRITICAL();
 
 				    vTaskDelay(5);	//Must delay .
-				} while (xReturned != pdFALSE);
-
+				}
+				
 				memset(cInputString, 0, sizeof(cInputString));
 				InputIndex = 0;
-				cRxedChar = 'a';
+				//cRxedChar = 'a';
+				//debug_flush();
 
 			} else {
 
@@ -152,7 +156,7 @@ void cliTask(void) {
 				} else if( cRxedChar == '\b' ) {
 
 					/* Backspace was pressed.  Erase the last character in the
-					 string - if any.*/
+					 string - if any. */
 					if( InputIndex > 0 ) {
 						InputIndex--;
 						cInputString[ InputIndex ] = '\0';
@@ -166,12 +170,12 @@ void cliTask(void) {
 					if( InputIndex < 20 ) {
 						cInputString[ InputIndex ] = cRxedChar;
 						InputIndex++;
-					}
+					} 
 				}
 			}
 		}
 
-		vTaskDelay(50);		
+		vTaskDelay(50);	
 	}
 }
 

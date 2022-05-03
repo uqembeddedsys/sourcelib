@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+extern UART_HandleTypeDef UART_debug;
+
 /**
   * @brief  Initialise the NP2 board by turning on the power headers
   * @param  Led: Specifies the Led to be configured.
@@ -180,11 +182,14 @@ unsigned char BRD_debuguart_getc() {
 	uint8_t rx_char = '\0';
 
 	//Non Block receive - 0 delay (set to HAL_MAX_DELAY for blocking)
-	if (HAL_UART_Receive(&UART_debug, &rx_char, 1, 10) == HAL_OK) {
+	/*if (HAL_UART_Receive(&UART_debug, &rx_char, 1, 20) == HAL_OK) {
 		return rx_char;
-	} else {
-		return '\0';
-	}
+	} */
+
+	while((READ_REG(BRD_DEBUG_UART->ISR) & USART_ISR_RXNE) == 0);
+	 rx_char = READ_REG(BRD_DEBUG_UART->RDR);
+
+	return rx_char;
 
 	//return (uint8_t)(__HAL_UART_FLUSH_DRREGISTER(&UART_debug) & (uint8_t)0x00FF);
 }

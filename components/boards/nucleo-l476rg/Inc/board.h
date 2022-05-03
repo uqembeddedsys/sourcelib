@@ -290,6 +290,5 @@ void HAL_Delayus(uint32_t us);
 
 
 
-
 #endif /* BOARD_BOARD_H_ */
 
