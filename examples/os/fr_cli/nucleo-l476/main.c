@@ -116,7 +116,6 @@ void cliTask(void) {
 
 				//Put new line and transmit buffer
 				debug_putc('\n');
-				//debug_flush();
 
 				/* Put null character in command input string. */
 				cInputString[InputIndex] = '\0';
@@ -143,8 +142,6 @@ void cliTask(void) {
 				
 				memset(cInputString, 0, sizeof(cInputString));
 				InputIndex = 0;
-				//cRxedChar = 'a';
-				//debug_flush();
 
 			} else {
 
