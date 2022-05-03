@@ -21,16 +21,16 @@
 #include "FreeRTOS_CLI.h"
 #include "string.h"
 
-#define UART_DEV_TX_PIN		9
-#define UART_DEV_RX_PIN		8
-#define UART_DEV_GPIO		GPIOD
-#define UART_DEV_GPIO_AF 	GPIO_AF7_USART3
+#define UART_DEV_TX_PIN		2
+#define UART_DEV_RX_PIN		3
+#define UART_DEV_GPIO		GPIOA
+#define UART_DEV_GPIO_AF 	GPIO_AF7_USART2
 #define UART_DEV_GPIO_CLK()	__GPIOD_CLK_ENABLE()
 
-#define UART_DEV		USART3
-#define UART_DEV_CLK()	__USART3_CLK_ENABLE()
+#define UART_DEV		USART2
+#define UART_DEV_CLK()	__USART2_CLK_ENABLE()
 #define UART_DEV_BAUD	115200					 //NOTE: If using USART1 or USART6, HAL_RCC_GetPCLK2Freq must be used.
-#define UART_DEV_IRQn	USART3_IRQn
+#define UART_DEV_IRQn	USART2_IRQn
 
 void cliTask(void);
 void Uart_callback(void);
@@ -124,10 +124,10 @@ void cliTask(void) {
 			
 
 				// Echo character
-				WRITE_REG(UART_DEV->DR, (unsigned char) cRxedChar);
+				WRITE_REG(UART_DEV->TDR, (unsigned char) cRxedChar);
 
 				// Wait for character to be transmitted.
-				while((READ_REG(UART_DEV->SR) & USART_SR_TC) == 0);
+				while((READ_REG(UART_DEV->ISR) & USART_ISR_TC) == 0);
 
 				// Process only if return is received. 
 				if (cRxedChar == '\r') {
@@ -147,10 +147,10 @@ void cliTask(void) {
 						for (i = 0; i < (int) strlen(pcOutputString); i++) {
 
 							// Transmit 1 character
-							WRITE_REG(UART_DEV->DR, (unsigned char) (*(pcOutputString + i)));
+							WRITE_REG(UART_DEV->TDR, (unsigned char) (*(pcOutputString + i)));
 
 							// Wait for character to be transmitted.
-							while((READ_REG(UART_DEV->SR) & USART_SR_TC) == 0);
+							while((READ_REG(UART_DEV->ISR) & USART_ISR_TC) == 0);
 
 						}
 						portEXIT_CRITICAL();
@@ -223,10 +223,10 @@ void Uart_callback(void) {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	uint32_t ulPreviousValue;
 
-	if ((UART_DEV->SR & USART_SR_RXNE) != 0) {
+	if ((UART_DEV->ISR & USART_ISR_RXNE) != 0) {
 
 		//Receive character from data register (automatically clears flag when read occurs)
-		rxChar = READ_REG(UART_DEV->DR);
+		rxChar = READ_REG(UART_DEV->RDR);
 
 		xStreamBufferSendFromISR( xStreamBuffer, &rxChar,1, &xHigherPriorityTaskWoken );
 	}
@@ -258,7 +258,7 @@ void hardware_init( void ) {
 	UART_DEV_GPIO_CLK();
 
 	//Clear and Set Alternate Function for pin (upper ARF register) 
-	MODIFY_REG(UART_DEV_GPIO->AFR[1], ((0x0F) << ((UART_DEV_RX_PIN-8) * 4)) | ((0x0F) << ((UART_DEV_TX_PIN-8)* 4)), ((UART_DEV_GPIO_AF << ((UART_DEV_RX_PIN-8) * 4)) | (UART_DEV_GPIO_AF << ((UART_DEV_TX_PIN-8)) * 4)));
+	MODIFY_REG(UART_DEV_GPIO->AFR[1], ((0x0F) << (UART_DEV_RX_PIN * 4)) | ((0x0F) << (UART_DEV_TX_PIN * 4)), ((UART_DEV_GPIO_AF << (UART_DEV_RX_PIN * 4)) | (UART_DEV_GPIO_AF << (UART_DEV_TX_PIN * 4))));
 	
 	//Clear and Set Alternate Function Push Pull Mode
 	MODIFY_REG(UART_DEV_GPIO->MODER, ((0x03 << (UART_DEV_RX_PIN * 2)) | (0x03 << (UART_DEV_TX_PIN * 2))), ((GPIO_MODE_AF_PP << (UART_DEV_RX_PIN * 2)) | (GPIO_MODE_AF_PP << (UART_DEV_TX_PIN * 2))));
@@ -294,7 +294,7 @@ void hardware_init( void ) {
 
 	// Set Baudrate to 115200 using APB frequency (80,000,000 Hz) and 16 bit sampling
 	// NOTE: If using USART1 or USART6, HAL_RCC_GetPCLK2Freq must be used.
-	WRITE_REG(UART_DEV->BRR, UART_BRR_SAMPLING16(HAL_RCC_GetPCLK1Freq(), UART_DEV_BAUD));
+	WRITE_REG(UART_DEV->BRR, UART_DIV_SAMPLING16(HAL_RCC_GetPCLK1Freq(), UART_DEV_BAUD));
 
 	//Disable handshaing signals
 	CLEAR_BIT(UART_DEV->CR3, USART_CR3_RTSE | USART_CR3_CTSE | USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);

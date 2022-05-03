@@ -28,7 +28,7 @@ include ./filelist.mk
 #Include freertos makefile
 include $(FREERTOS_PATH)/filelist.mk
 
-#include nucelo-f429zi makefile - NOTE MUST BE LAST TO INCLUDE
+#include nucelo makefile - NOTE MUST BE LAST TO INCLUDE
 include $(SOURCELIB_ROOT)/components/boards/nucleo-f401re/board.mk
 include $(SOURCELIB_ROOT)/components/mk/nucleo-f401/m_launch.mk
 include $(SOURCELIB_ROOT)/components/mk/nucleo-f401/m_common.mk

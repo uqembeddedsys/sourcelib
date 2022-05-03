@@ -19,18 +19,18 @@
 #include "task.h"
 #include "stream_buffer.h"
 #include "FreeRTOS_CLI.h"
-#include "string.h"
+#include <string.h>
 
-#define UART_DEV_TX_PIN		9
-#define UART_DEV_RX_PIN		8
-#define UART_DEV_GPIO		GPIOD
-#define UART_DEV_GPIO_AF 	GPIO_AF7_USART3
+#define UART_DEV_TX_PIN		2
+#define UART_DEV_RX_PIN		3
+#define UART_DEV_GPIO		GPIOA
+#define UART_DEV_GPIO_AF 	GPIO_AF7_USART2
 #define UART_DEV_GPIO_CLK()	__GPIOD_CLK_ENABLE()
 
-#define UART_DEV		USART3
-#define UART_DEV_CLK()	__USART3_CLK_ENABLE()
+#define UART_DEV		USART2
+#define UART_DEV_CLK()	__USART2_CLK_ENABLE()
 #define UART_DEV_BAUD	115200					 //NOTE: If using USART1 or USART6, HAL_RCC_GetPCLK2Freq must be used.
-#define UART_DEV_IRQn	USART3_IRQn
+#define UART_DEV_IRQn	USART2_IRQn
 
 void cliTask(void);
 void Uart_callback(void);
@@ -258,7 +258,7 @@ void hardware_init( void ) {
 	UART_DEV_GPIO_CLK();
 
 	//Clear and Set Alternate Function for pin (upper ARF register) 
-	MODIFY_REG(UART_DEV_GPIO->AFR[1], ((0x0F) << ((UART_DEV_RX_PIN-8) * 4)) | ((0x0F) << ((UART_DEV_TX_PIN-8)* 4)), ((UART_DEV_GPIO_AF << ((UART_DEV_RX_PIN-8) * 4)) | (UART_DEV_GPIO_AF << ((UART_DEV_TX_PIN-8)) * 4)));
+	MODIFY_REG(UART_DEV_GPIO->AFR[1], ((0x0F) << (UART_DEV_RX_PIN * 4)) | ((0x0F) << (UART_DEV_TX_PIN * 4)), ((UART_DEV_GPIO_AF << (UART_DEV_RX_PIN * 4)) | (UART_DEV_GPIO_AF << (UART_DEV_TX_PIN * 4))));
 	
 	//Clear and Set Alternate Function Push Pull Mode
 	MODIFY_REG(UART_DEV_GPIO->MODER, ((0x03 << (UART_DEV_RX_PIN * 2)) | (0x03 << (UART_DEV_TX_PIN * 2))), ((GPIO_MODE_AF_PP << (UART_DEV_RX_PIN * 2)) | (GPIO_MODE_AF_PP << (UART_DEV_TX_PIN * 2))));
