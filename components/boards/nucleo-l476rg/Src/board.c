@@ -180,7 +180,7 @@ unsigned char BRD_debuguart_getc() {
 	uint8_t rx_char = '\0';
 
 	//Non Block receive - 0 delay (set to HAL_MAX_DELAY for blocking)
-	if (HAL_UART_Receive(&UART_debug, &rx_char, 1, 0) == HAL_OK) {
+	if (HAL_UART_Receive(&UART_debug, &rx_char, 1, 10) == HAL_OK) {
 		return rx_char;
 	} else {
 		return '\0';

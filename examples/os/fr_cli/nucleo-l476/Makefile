@@ -12,7 +12,7 @@ PROJ_NAME=main
 
 #Your local source files must ONLY be added to SRCS
 SRCS = $(PROJ_NAME).c 
-CFLAGS += -I.
+CFLAGS += -I.  -DENABLE_DEBUG_UART #enable Com Port
 
 ###################################################
 ROOT=$(shell pwd)
