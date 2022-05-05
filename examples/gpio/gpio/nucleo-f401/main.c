@@ -28,7 +28,7 @@ int main(void)  {
 	// Main processing loop
   while (1) {
 
-    // Toggle pin A3 high or low
+    // Toggle pin B3 high or low
     write_value = ~write_value;
 
     if ((write_value & 0x01) == 0x01){
@@ -39,7 +39,7 @@ int main(void)  {
       GPIOB->ODR &= ~(0x01 << 3);   //Clear the bit in the ODR
     }
 
-    //Turn Blue LED on, if pin A2 is high
+    //Turn Blue LED on, if pin B5 is high
     if ((GPIOB->IDR & (0x0001 << 5)) == (0x0001 << 5)){
       
       BRD_LEDGreenOn(); 
@@ -60,10 +60,10 @@ void hardware_init(void) {
   BRD_LEDInit();		//Initialise LEDS
 	BRD_LEDGreenOff();
 
-	// Enable the GPIO A Clock
+	// Enable the GPIO Clock
   __GPIOB_CLK_ENABLE();
 
-  //Initialise A3 as an output.
+  //Initialise B3 as an output.
   GPIOB->MODER &= ~(0x03 << (3 *2));  //clear bits
   GPIOB->MODER |= (0x01 << (3 *2));   //Set for push pull
 
@@ -76,7 +76,7 @@ void hardware_init(void) {
   GPIOB->PUPDR &= ~(0x03 << (3 *2));   //Clear Bits
   GPIOB->PUPDR |= ((0x01) << (3 *2));  //Set for Pull down output
   
-  // Initalise A2 as an input.
+  // Initalise B5 as an input.
   GPIOB->MODER &= ~(0x03 << (5 * 2));			//Clear bits for input mode
 
   GPIOB->OSPEEDR &= ~(0x03<<(5 * 2));

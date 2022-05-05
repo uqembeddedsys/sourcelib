@@ -1,10 +1,19 @@
 /**
   ******************************************************************************
-  * @file    log/main.c
+  * @file    console/main.c
   * @author  MDS
-  * @date    17022022
+  * @date    27032022
   * @brief   Nucleo debug log example. Prints to the console, every 2 seconds.
-  *          Run serial terminal program script - kermusb to view the output
+  *          Will detect and print key press to console
+  * 
+  *          VM: Run serial terminal program script - kermusb
+  * 
+  *          Windows Native Installation: use Putty (Serial Connection/Port) with baudrate 115200.
+  *          Linux/OSX Native Installation: run in a terminal window:
+  *          kermusb
+  *          Alternate Linux/OSX, run in a terminal windows:
+  *          OSX: screen /dev/tty.usXXXXXXXX 115200
+  *          LINUX: screen /dev/ttyACMx 115200
   ******************************************************************************
   */
 
@@ -21,9 +30,9 @@ void hardware_init(void);
 int main(void)  {
 
   uint32_t prev_tick;
+  char recvChar;
 
-	//HAL_Init();			//Initalise Board
-  BRD_init();
+	HAL_Init();			//Initalise Board
 	hardware_init();	//Initalise hardware modules
 	
   prev_tick = 0;
@@ -31,16 +40,21 @@ int main(void)  {
 	// Main processing loop
   while (1) {
         
-		// Toggle all LEDs, every 2 seconds
+		// Display system time every 2 seconds
     if ((HAL_GetTick() - prev_tick) >= 2000) {
-		  BRD_LEDGreenToggle();
-
       prev_tick =  HAL_GetTick();
       debug_log("Sys time %d\n\r", HAL_GetTick());
 
     }
 
-		HAL_Delay(1000);		//Delay for 1s
+    //Check for key press (other than null character)
+    if ((recvChar = BRD_debuguart_getc()) != '\0') {
+
+      BRD_LEDGreenToggle();
+
+      debug_log("Character: %c - ASCII Table value: %d\n\r", recvChar, recvChar);
+    }
+
 	}
 
   return 0;
@@ -55,6 +69,6 @@ void hardware_init(void) {
 
   BRD_debuguart_init();  //Initialise UART for debug log output
 
-	// Turn off LEDs
-	BRD_LEDGreenOn();
+	// Turn off Green LED
+	BRD_LEDGreenOff();
 }

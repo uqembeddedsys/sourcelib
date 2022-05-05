@@ -32,7 +32,7 @@ int main(void)
 		// Wait for ADC conversion to finish
 		while (HAL_ADC_PollForConversion(&AdcHandle, 10) != HAL_OK);
 
-		adc_value = ADC1->DR;		//Read ADC1 Data Register for converted value.
+		adc_value = AdcHandle.Instance->DR;		//Read ADC1 Data Register for converted value.
 
 		// If ADC value is higher than 1/2 Reference voltage, turn on Green LED.
 		// Else if ADC value is lower than 1/2 Reference voltage, turn off Green LED.
@@ -58,7 +58,7 @@ void hardware_init(void) {
 	// Turn off LEDs
 	BRD_LEDGreenOff();
 
-	// Enable the GPIO A Clock
+	// Enable the GPIO Clock
   	__GPIOA_CLK_ENABLE();
   
 	// Initalise PA0 as an Analog input.

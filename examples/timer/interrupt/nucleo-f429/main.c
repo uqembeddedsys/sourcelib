@@ -13,7 +13,7 @@
 #include "board.h"
 #include "processor_hal.h"
 
-#define TIMER_RUNNING_FREQ  50000           //Frequency (in Hz)
+#define TIMER_COUNTER_FREQ  50000           //Frequency (in Hz)
 #define TIMER_1SECOND_PERIOD    50000       //Period for 1s (in count ticks)
 
 void hardware_init(void);
@@ -54,10 +54,9 @@ void hardware_init(void) {
 	// Timer 2 clock enable
 	__TIM2_CLK_ENABLE();
 
-	// Compute the prescaler value
-	// Set the clock prescaler to 50kHz
+	// Compute the prescaler value to set the timer counting frequency to 50kHz
 	// SystemCoreClock is the system clock frequency
-	TIM2->PSC = ((SystemCoreClock / 2) / TIMER_RUNNING_FREQ) - 1;
+	TIM2->PSC = ((SystemCoreClock / 2) / TIMER_COUNTER_FREQ) - 1;
 
 	// Counting direction: 0 = up-counting, 1 = down-counting (Timer Control Register 1)
 	TIM2->CR1 |= TIM_CR1_DIR; 
