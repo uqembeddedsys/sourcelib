@@ -121,8 +121,6 @@ void takeTask( void ) {
 
             // Turn on LED
 			BRD_LEDGreenOn();
-
-			uxBits = xEventGroupClearBits(ledctrlEventGroup, EVT_LED_ON);		//Clear LED ON event flat.
 		}
 
 		/* Check if LED Event flag is set */
@@ -130,8 +128,6 @@ void takeTask( void ) {
 
             // Turn off LED
 			BRD_LEDGreenOff();
-
-			uxBits = xEventGroupClearBits(ledctrlEventGroup, EVT_LED_OFF);		//Clear LED OFF event flat.
 		}
 
 		vTaskDelay(1);
