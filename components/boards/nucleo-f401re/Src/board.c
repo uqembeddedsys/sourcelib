@@ -5,12 +5,11 @@
 #include <string.h>
 
 /**
-  * @brief  Initialise the NP2 board by turning on the power headers
-  * @param  Led: Specifies the Led to be configured.
-  *   This parameter can be one of following parameters:
+  * @brief  Initialise the delay  counter
+  * @param  None
   * @retval None
   */
-void BRD_init() {
+void BRD_delayInit() {
 
 	HAL_Init();
 	BRD_debuguart_init();
@@ -35,15 +34,21 @@ void BRD_init() {
 void BRD_LEDInit() {
   GPIO_InitTypeDef  GPIO_InitStructure;
 
-  /* Enable the GPIO_LED Clock */
+  // Enable the GPIO_LED Clock
   __BRD_GREEN_LED_GPIO_CLK();
 
-  /* Configure the GPIO_LED pin */
-  GPIO_InitStructure.Pin = BRD_GREEN_LED_PIN;
-  GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStructure.Pull = GPIO_PULLUP;
-  GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(BRD_GREEN_LED_GPIO_PORT, &GPIO_InitStructure);
+  	//Initialise LED pins as an output.
+	MODIFY_REG(BRD_GREEN_LED_GPIO_PORT->MODER, ( 0x03 << (BRD_GREEN_LED_PIN*2)), (0x01 << (BRD_GREEN_LED_PIN*2)) );
+
+	// Set for Fast speed
+  	MODIFY_REG(BRD_GREEN_LED_GPIO_PORT->OSPEEDR, (0x03 << (BRD_GREEN_LED_PIN*2)),  (0x02 << (BRD_GREEN_LED_PIN*2))  );
+
+	// Clear Bit for Push/Pull output 
+  	CLEAR_BIT(BRD_GREEN_LED_GPIO_PORT->OTYPER, (0x01 << BRD_GREEN_LED_PIN) );       
+
+	// Activate the Pull-up or Pull down resistor for the current IO
+  	MODIFY_REG(BRD_GREEN_LED_GPIO_PORT->PUPDR, ( (0x03 << (BRD_GREEN_LED_PIN*2)) , (0x01 << (BRD_GREEN_LED_PIN*2)) );    //Set for Pull down output
+
 
 }
 
@@ -56,7 +61,7 @@ void BRD_LEDInit() {
 void BRD_LEDOn(uint8_t ledmask) {
 
 	if ((ledmask & BRD_GREEN_LEDMASK) != 0) {
-		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_PIN;
+		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_GPIO_PIN;
 	}
 
 }
@@ -71,7 +76,7 @@ void BRD_LEDOff(uint8_t ledmask) {
   //BRD_LED_GPIO_PORT->BSRR |= BRD_LED_PIN << 16;
 
   if ((ledmask & BRD_GREEN_LEDMASK) != 0) {
-  		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_PIN << 16;
+  		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_GPIO_PIN << 16;
   	}
 
 }
@@ -86,7 +91,7 @@ void BRD_LEDToggle(uint8_t ledmask) {
   //BRD_LED_GPIO_PORT->ODR ^= BRD_LED_PIN;
 
   if ((ledmask & BRD_GREEN_LEDMASK) != 0) {
-	  BRD_GREEN_LED_GPIO_PORT->ODR ^= BRD_GREEN_LED_PIN;
+	  BRD_GREEN_LED_GPIO_PORT->ODR ^= BRD_GREEN_LED_GPIO_PIN;
   }
 
 }

@@ -53,6 +53,8 @@ int main(void)  {
       BRD_LEDGreenToggle();
 
       debug_log("Character: %c - ASCII Table value: %d\n\r", recvChar, recvChar);
+
+      BRD_debuguart_putc(recvChar);
     }
 
 	}

@@ -18,7 +18,6 @@
  */
 #include "board.h"
 #include "processor_hal.h"
-#include "main.h"
 
 #define UART_DEV_TX_PIN		8
 #define UART_DEV_RX_PIN		9
@@ -56,7 +55,7 @@ int main(void) {
 		// Wait for character to be transmitted.
 		while((READ_REG(UART_DEV->SR) & USART_SR_TC) == 0);
 	
-		BRD_LEDBlueToggle();	//Toggle blue LED on/off
+		BRD_LEDGreenToggle();	//Toggle Green LED on/off
 		HAL_Delay(1000);		//Delay for 1s (1000ms)
 	}
 }
@@ -66,12 +65,10 @@ int main(void) {
  */
 void hardware_init(void) {
 
-	BRD_LEDInit(); //Initialise LEDs
+	BRD_LEDInit(); //Initialise LED
 
-	// Turn off LEDs
-	BRD_LEDRedOff();
+	// Turn off LED
 	BRD_LEDGreenOff();
-	BRD_LEDBlueOff();
 
 	// Enable UART DEV GPIO clock
 	UART_DEV_GPIO_CLK();
@@ -89,7 +86,7 @@ void hardware_init(void) {
 	SET_BIT(UART_DEV_GPIO->OTYPER, ((0x01 << UART_DEV_RX_PIN) | (0x01 << UART_DEV_TX_PIN)));
 
 	//Clear and set bits for no push/pull
-	MODIFY_REG(UART_DEV_GPIO->PUPDR, (0x03 << (UART_DEV_RX_PIN * 2)) | (0x03 << (UART_DEV_TX_PIN * 2)), (GPIO_PULLUP << (UART_DEV_RX_PIN * 2)) | (GPIO_PULLDOWN << (UART_DEV_TX_PIN * 2)));
+	MODIFY_REG(UART_DEV_GPIO->PUPDR, (0x03 << (UART_DEV_RX_PIN * 2)) | (0x03 << (UART_DEV_TX_PIN * 2)), (GPIO_PULLUP << (UART_DEV_RX_PIN * 2)) | (GPIO_PULLUP << (UART_DEV_TX_PIN * 2)));
 
 	// UART Settings - No hardware flow control, 8 data bits, no parity, 1 start bit and 1 stop bit		
 	// Enable USART clock
@@ -131,7 +128,7 @@ void hardware_init(void) {
 /*
  * Uart callback function - receive character.
  */
-void Uart_callback(void) {
+void uart_callback(void) {
 
 	uint8_t rxChar;
 
@@ -146,4 +143,15 @@ void Uart_callback(void) {
 		// Wait for character to be transmitted.
 		while((READ_REG(UART_DEV->SR) & USART_SR_TC) == 0);
 	}
+}
+
+/*
+ * Interrupt handler (ISR) for USART3 IRQ Handler
+ * Note ISR should only execute a callback
+ */ 
+void USART3_IRQHandler(void) {
+
+	BRD_LEDGreenToggle();
+
+	uart_callback();   // Callback for USART3
 }

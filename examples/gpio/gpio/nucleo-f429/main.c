@@ -70,7 +70,7 @@ void hardware_init(void) {
   GPIOG->OSPEEDR &= ~(0x03<<(9 * 2));
 	GPIOG->OSPEEDR |=   0x02<<(9 * 2);  // Set for Fast speed
 
-  GPIOG->OTYPER &= ~(0x01 << 9);       //Clear Bit for Push/Pull utput
+  GPIOG->OTYPER &= ~(0x01 << 9);       //Clear Bit for Push/Pull Output
 
   // Activate the Pull-up or Pull down resistor for the current IO
   GPIOG->PUPDR &= ~(0x03 << (9 * 2));   //Clear Bits

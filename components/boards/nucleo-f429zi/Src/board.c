@@ -1,16 +1,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "board.h"
-#include "stm32f4xx_hal.h"
+#include "processor_hal.h"
 #include <stdio.h>
 #include <string.h>
 
 /**
-  * @brief  Initialise the NP2 board by turning on the power headers
-  * @param  Led: Specifies the Led to be configured.
-  *   This parameter can be one of following parameters:
+  * @brief  Initialise the delay  counter
+  * @param  None
   * @retval None
   */
-void BRD_init() {
+void BRD_delayInit() {
 
 	HAL_Init();
 	BRD_debuguart_init();
@@ -23,41 +22,29 @@ void BRD_init() {
 
 }
 
-
-
 /**
   * @brief  Configures LED GPIO.
   * @param  Led: Specifies the Led to be configured.
   *   This parameter can be one of following parameters:
-
   * @retval None
   */
 void BRD_LEDInit() {
-  GPIO_InitTypeDef  GPIO_InitStructure;
 
-  /* Enable the GPIO_LED Clock */
-  __BRD_GREEN_LED_GPIO_CLK();
-  __BRD_BLUE_LED_GPIO_CLK();
-  __BRD_RED_LED_GPIO_CLK();
+  	// Enable the GPIO_LED Clock
+ 	__BRD_ALL_LED_GPIO_CLK();
 
-  /* Configure the GPIO_LED pin */
-  GPIO_InitStructure.Pin = BRD_GREEN_LED_PIN;
-  GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStructure.Pull = GPIO_PULLUP;
-  GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(BRD_GREEN_LED_GPIO_PORT, &GPIO_InitStructure);
+  	//Initialise LED pins as an output.
+	MODIFY_REG(__BRD_ALL_LED_GPIO->MODER, ( 0x03 << (BRD_RED_LED_PIN*2)) | ( 0x03 << (BRD_GREEN_LED_PIN*2)) | (0x03 << (BRD_BLUE_LED_PIN*2)), (0x01 << (BRD_RED_LED_PIN*2)) | (0x01 << (BRD_GREEN_LED_PIN*2)) | (0x01 << (BRD_BLUE_LED_PIN*2)) );
 
-  GPIO_InitStructure.Pin = BRD_BLUE_LED_PIN;
-  GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStructure.Pull = GPIO_PULLUP;
-  GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(BRD_BLUE_LED_GPIO_PORT, &GPIO_InitStructure);
+	// Set for Fast speed
+  	MODIFY_REG(__BRD_ALL_LED_GPIO->OSPEEDR, (0x03 << (BRD_RED_LED_PIN*2)) | (0x03 << (BRD_GREEN_LED_PIN*2)) | (0x03 << (BRD_BLUE_LED_PIN*2)), (0x02 << (BRD_RED_LED_PIN*2)) | (0x02 << (BRD_GREEN_LED_PIN*2)) | (0x02 << (BRD_BLUE_LED_PIN*2)) );
 
-  GPIO_InitStructure.Pin = BRD_RED_LED_PIN;
-  GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStructure.Pull = GPIO_PULLUP;
-  GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
-  HAL_GPIO_Init(BRD_RED_LED_GPIO_PORT, &GPIO_InitStructure);
+	// Clear Bit for Push/Pull output 
+  	CLEAR_BIT(__BRD_ALL_LED_GPIO->OTYPER, ((0x01 << BRD_RED_LED_PIN) | (0x01 << BRD_GREEN_LED_PIN) | (0x01 << BRD_BLUE_LED_PIN)));       
+
+	// Activate the Pull-up or Pull down resistor for the current IO
+  	MODIFY_REG(__BRD_ALL_LED_GPIO->PUPDR, (0x03 << (BRD_RED_LED_PIN*2)) | (0x03 << (BRD_GREEN_LED_PIN*2)) | (0x03 << (BRD_BLUE_LED_PIN*2)), (0x01 << (BRD_RED_LED_PIN*2)) | (0x01 << (BRD_GREEN_LED_PIN*2)) | (0x01 << (BRD_BLUE_LED_PIN*2)) );    //Set for Pull down output
+
 }
 
 /**
@@ -69,15 +56,15 @@ void BRD_LEDInit() {
 void BRD_LEDOn(uint8_t ledmask) {
 
 	if ((ledmask & BRD_GREEN_LEDMASK) != 0) {
-		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_PIN;
+		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_GPIO_PIN;
 	}
 
 	if ((ledmask & BRD_BLUE_LEDMASK) != 0) {
-		BRD_BLUE_LED_GPIO_PORT->BSRR |= BRD_BLUE_LED_PIN;
+		BRD_BLUE_LED_GPIO_PORT->BSRR |= BRD_BLUE_LED_GPIO_PIN;
 	}
 
 	if ((ledmask & BRD_RED_LEDMASK) != 0) {
-			BRD_RED_LED_GPIO_PORT->BSRR |= BRD_RED_LED_PIN;
+			BRD_RED_LED_GPIO_PORT->BSRR |= BRD_RED_LED_GPIO_PIN;
 	}
 }
 
@@ -91,15 +78,15 @@ void BRD_LEDOff(uint8_t ledmask) {
   //BRD_LED_GPIO_PORT->BSRR |= BRD_LED_PIN << 16;
 
   if ((ledmask & BRD_GREEN_LEDMASK) != 0) {
-  		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_PIN << 16;
+  		BRD_GREEN_LED_GPIO_PORT->BSRR |= BRD_GREEN_LED_GPIO_PIN << 16;
   	}
 
   	if ((ledmask & BRD_BLUE_LEDMASK) != 0) {
-  		BRD_BLUE_LED_GPIO_PORT->BSRR |= BRD_BLUE_LED_PIN << 16;
+  		BRD_BLUE_LED_GPIO_PORT->BSRR |= BRD_BLUE_LED_GPIO_PIN << 16;
   	}
 
   	if ((ledmask & BRD_RED_LEDMASK) != 0) {
-  		BRD_RED_LED_GPIO_PORT->BSRR |= BRD_RED_LED_PIN << 16;
+  		BRD_RED_LED_GPIO_PORT->BSRR |= BRD_RED_LED_GPIO_PIN << 16;
   	}
 }
 
@@ -113,24 +100,24 @@ void BRD_LEDToggle(uint8_t ledmask) {
   //BRD_LED_GPIO_PORT->ODR ^= BRD_LED_PIN;
 
   if ((ledmask & BRD_GREEN_LEDMASK) != 0) {
-	  BRD_GREEN_LED_GPIO_PORT->ODR ^= BRD_GREEN_LED_PIN;
+	  BRD_GREEN_LED_GPIO_PORT->ODR ^= BRD_GREEN_LED_GPIO_PIN;
   }
 
   if ((ledmask & BRD_BLUE_LEDMASK) != 0) {
-	  BRD_BLUE_LED_GPIO_PORT->ODR ^= BRD_BLUE_LED_PIN;
+	  BRD_BLUE_LED_GPIO_PORT->ODR ^= BRD_BLUE_LED_GPIO_PIN;
   }
 
   if ((ledmask & BRD_RED_LEDMASK) != 0) {
-	  BRD_RED_LED_GPIO_PORT->ODR ^= BRD_RED_LED_PIN;
+	  BRD_RED_LED_GPIO_PORT->ODR ^= BRD_RED_LED_GPIO_PIN;
   }
 }
 
 UART_HandleTypeDef UART_debug;
 
 /* Initialise Debug UART */
-void BRD_debuguart_init()
-{
-	GPIO_InitTypeDef GPIO_serialtx;
+void BRD_debuguart_init() {
+
+#ifdef ENABLE_DEBUG_UART
 
 	//Enable DEBUG UART clock
 	__BRD_DEBUG_UART_CLK();
@@ -143,31 +130,31 @@ void BRD_debuguart_init()
     UART_debug.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
 	UART_debug.Init.Mode = UART_MODE_TX_RX;
 
-#ifdef ENABLE_DEBUG_UART
-	__BRD_DEBUG_UART_TX_GPIO_CLK();
-	__BRD_DEBUG_UART_RX_GPIO_CLK();
+	__BRD_DEBUG_UART_GPIO_CLK();
 
-  	/* Configure the GPIO TX pin for DEBUG UART */
-  	GPIO_serialtx.Pin = BRD_DEBUG_UART_TX_PIN;
-  	GPIO_serialtx.Mode = GPIO_MODE_AF_PP;
-  	GPIO_serialtx.Pull = GPIO_PULLUP;
-  	GPIO_serialtx.Speed = GPIO_SPEED_FAST;
-	GPIO_serialtx.Alternate = BRD_DEBUG_UART_TX_AF;
-  	HAL_GPIO_Init(BRD_DEBUG_UART_TX_GPIO_PORT, &GPIO_serialtx);
+	// Initialise TX as an output.
+  	// Initalise RX as an input.
+	// Clear and Set Alternate Function for pin (upper ARF register) 
+	MODIFY_REG(BRD_DEBUG_UART_GPIO->AFR[1], ((0x0F) << ((BRD_DEBUG_UART_RX_PIN-8)*4)) | ((0x0F) << ((BRD_DEBUG_UART_TX_PIN-8)*4)), ((BRD_DEBUG_UART_AF << ((BRD_DEBUG_UART_RX_PIN-8)*4)) | (BRD_DEBUG_UART_AF << ((BRD_DEBUG_UART_TX_PIN-8))*4)));
+	
+	//Clear and Set Alternate Function Push Pull Mode
+	MODIFY_REG(BRD_DEBUG_UART_GPIO->MODER, ((0x03 << (BRD_DEBUG_UART_RX_PIN*2)) | (0x03 << (BRD_DEBUG_UART_TX_PIN*2))), ((GPIO_MODE_AF_PP << (BRD_DEBUG_UART_RX_PIN*2)) | (GPIO_MODE_AF_PP << (BRD_DEBUG_UART_TX_PIN*2))));
+	
+	//Set low speed.
+	SET_BIT(BRD_DEBUG_UART_GPIO->OSPEEDR, (GPIO_SPEED_FAST << BRD_DEBUG_UART_RX_PIN) | (GPIO_SPEED_FAST << BRD_DEBUG_UART_TX_PIN));
 
-  	GPIO_serialtx.Pin = BRD_DEBUG_UART_RX_PIN;
-	GPIO_serialtx.Mode = GPIO_MODE_AF_PP;
-	GPIO_serialtx.Pull = GPIO_PULLUP;
-	GPIO_serialtx.Speed = GPIO_SPEED_FAST;
-	GPIO_serialtx.Alternate = BRD_DEBUG_UART_RX_AF;
-	HAL_GPIO_Init(BRD_DEBUG_UART_RX_GPIO_PORT, &GPIO_serialtx);
+	//Set Bit for Push/Pull output
+	SET_BIT(BRD_DEBUG_UART_GPIO->OTYPER, ((0x01 << BRD_DEBUG_UART_RX_PIN) | (0x01 << BRD_DEBUG_UART_TX_PIN)));
+
+	//Clear and set bits for no push/pull
+	MODIFY_REG(BRD_DEBUG_UART_GPIO->PUPDR, (0x03 << (BRD_DEBUG_UART_RX_PIN*2)) | (0x03 << (BRD_DEBUG_UART_TX_PIN*2)), (GPIO_PULLUP << (BRD_DEBUG_UART_RX_PIN*2)) | (GPIO_PULLUP << (BRD_DEBUG_UART_TX_PIN*2)));
 
     //Allow stdio stdout buffer to be used for print, putc, etc.
     setbuf(stdout, NULL);
 
+	HAL_UART_Init(&UART_debug);		//Initialise DEBUG UART
 #endif
 
-	HAL_UART_Init(&UART_debug);		//Initialise DEBUG UART
 }
 
 //Transmit char through debug uart and USB, if enabled
@@ -178,8 +165,8 @@ void BRD_debuguart_putc(unsigned char c)
     __HAL_UART_FLUSH_DRREGISTER(&UART_debug);
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpointer-sign"
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wpointer-sign"
 //Transmit string through debug uart and USB, if enabled
 void BRD_debuguart_puts(unsigned char *c)
 {
@@ -191,7 +178,7 @@ void BRD_debuguart_puts(unsigned char *c)
 	}
 
 }
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic pop
 
 //Transmit message through debug uart and USB, if enabled
 void BRD_debuguart_putm(unsigned char *c, int len)
