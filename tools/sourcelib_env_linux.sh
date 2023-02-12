@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
+#DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
 
 # add sourcelib and path to profile
 echo export 'SOURCELIB_ROOT=$HOME/csse3010/sourcelib' >> ~/.bashrc
