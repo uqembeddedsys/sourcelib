@@ -15,12 +15,12 @@ void hardware_init(void);
 
 /*
  * Main program - flashes onboard LEDs
- */
-int main(void)  {
+ */int main(void)  {
 
   uint32_t prev_tick;
 
-	HAL_Init();			//Initalise Board
+	//HAL_Init();			//Initalise Board
+  BRD_init();
 	hardware_init();	//Initalise hardware modules
 	
   prev_tick = 0;
@@ -47,7 +47,7 @@ int main(void)  {
 void hardware_init(void) {
 
 	BRD_LEDInit();		//Initialise LEDS
-  
+
 	// Turn off LEDs
 	BRD_LEDGreenOn();
 }
