@@ -19,8 +19,7 @@ void hardware_init(void);
 
   uint32_t prev_tick;
 
-	//HAL_Init();			//Initalise Board
-  BRD_init();
+	HAL_Init();			//Initalise Board
 	hardware_init();	//Initalise hardware modules
 	
   prev_tick = 0;
