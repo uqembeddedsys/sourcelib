@@ -48,7 +48,8 @@ void hardware_init(void) {
 	// Enable GPIO Clock
 	__GPIOC_CLK_ENABLE();
 
-    GPIOC->OSPEEDR |= (GPIO_SPEED_FAST << (13 * 2));	//Set fast speed.
+  GPIOC->OSPEEDR |= (GPIO_SPEED_FAST << (13 * 2));	//Set fast speed.
+
 	GPIOC->PUPDR &= ~(0x03 << (13 * 2));			//Clear bits for no push/pull
 	GPIOC->MODER &= ~(0x03 << (13 * 2));			//Clear bits for input mode
 
