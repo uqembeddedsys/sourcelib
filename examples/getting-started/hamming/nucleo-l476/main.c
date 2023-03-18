@@ -21,7 +21,7 @@ void main(void) {
 	uint8_t unencodedbyte;
 	uint16_t CodedWord;
 
-	HAL_Init();	//Initialise NP2
+	HAL_Init();	//Initialise Board
 	hardware_init();	//Initialise hardware modules
 
 	unencodedbyte = 0x34;
