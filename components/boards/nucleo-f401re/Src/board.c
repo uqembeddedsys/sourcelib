@@ -47,7 +47,7 @@ void BRD_LEDInit() {
   	CLEAR_BIT(BRD_GREEN_LED_GPIO_PORT->OTYPER, (0x01 << BRD_GREEN_LED_PIN) );       
 
 	// Activate the Pull-up or Pull down resistor for the current IO
-  	MODIFY_REG(BRD_GREEN_LED_GPIO_PORT->PUPDR, ( (0x03 << (BRD_GREEN_LED_PIN*2)) , (0x01 << (BRD_GREEN_LED_PIN*2)) );    //Set for Pull down output
+  	MODIFY_REG(BRD_GREEN_LED_GPIO_PORT->PUPDR, ( 0x03 << (BRD_GREEN_LED_PIN*2)) , (0x01 << (BRD_GREEN_LED_PIN*2)) );    //Set for Pull down output
 
 
 }
