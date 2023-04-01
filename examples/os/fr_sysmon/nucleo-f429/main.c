@@ -8,7 +8,6 @@
   *          An osciloscope or logic analyser can be used to view the 
   *          system monitor signals.
   *
-  * 		 Note: only HAL_Init must be called before
   ******************************************************************************
   *
   */
@@ -27,7 +26,7 @@ void Task3_Task( void );
 // Task Priorities (Idle Priority is the lowest priority)
 #define TASK1_PRIORITY					( tskIDLE_PRIORITY + 2 )
 #define TASK2_PRIORITY					( tskIDLE_PRIORITY + 2 )
-#define TASK3_PRIORITY					( tskIDLE_PRIORITY + 1 )
+#define TASK3_PRIORITY					( tskIDLE_PRIORITY + 2 )
 
 // Task Stack Allocations (must be a multiple of the minimal stack size)
 #define TASK1_STACK_SIZE		( configMINIMAL_STACK_SIZE * 2 )
@@ -112,14 +111,14 @@ void Task1_Task( void ) {
  */
 void Task2_Task( void ) {
 
-	SYSMON_CHAN1_CLR();				//Clear LA Channel 0
+	SYSMON_CHAN1_CLR();				//Clear LA Channel 1
 
 	for (;;) {
-		SYSMON_CHAN1_SET();			//Set LA Channel 0	
+		SYSMON_CHAN1_SET();			//Set LA Channel 1	
 		BRD_LEDGreenToggle();		//Random instruction	
 
 		vTaskDelay(3);			//Extra Delay for 3ms	
-		SYSMON_CHAN1_CLR();			//Clear LA Channel 0	
+		SYSMON_CHAN1_CLR();			//Clear LA Channel 1	
         
 		vTaskDelay(1);			//Mandatory delay ONLY for 	
 											//Task 1&2 (REMOVE FOR TASK 3)
@@ -131,16 +130,14 @@ void Task2_Task( void ) {
  */
 void Task3_Task( void ) {
 
-	SYSMON_CHAN2_CLR();				//Clear LA Channel 0
+	SYSMON_CHAN2_CLR();				//Clear LA Channel 2
 
 	for (;;) {
-		SYSMON_CHAN2_SET();			//Set LA Channel 0	
+		SYSMON_CHAN2_SET();			//Set LA Channel 2	
 		BRD_LEDGreenToggle();		//Random instruction	
 
-		vTaskDelay(3);			//Extra Delay for 3ms	
-		SYSMON_CHAN2_CLR();			//Clear LA Channel 0	
+		SYSMON_CHAN2_CLR();			//Clear LA Channel 2	
         
-		
 	}
 }
 
