@@ -78,10 +78,10 @@ void ledTask( void ) {
  */
 void hardware_init( void ) {
 
-	portDISABLE_INTERRUPTS();	//Disable interrupts
+	taskENTER_CRITICAL();	//Stop any interruption of the critical section
 
 	BRD_LEDInit();				//Initialise Blue LED
 	BRD_LEDGreenOff();			//Turn off Blue LED
 
-	portENABLE_INTERRUPTS();	//Enable interrupts
+	taskEXIT_CRITICAL();
 }

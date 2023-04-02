@@ -2,11 +2,14 @@
   ******************************************************************************
   * @file    os/fr_sysmon/main.c
   * @author  MDS
-  * @date    04022018
+  * @date    03042023
   * @brief   FreeRTOS System Monitor example. Creates 3 tasks for use with
   *          System Monitor. System monitor used is on pins D0, D1 and D3
   *          An osciloscope or logic analyser can be used to view the 
   *          system monitor signals.
+  * 
+  * 		 Reference: Task Critical Section
+  * 		 https://www.freertos.org/taskENTER_CRITICAL_taskEXIT_CRITICAL.html
   *
   ******************************************************************************
   *
@@ -95,14 +98,15 @@ void Task1_Task( void ) {
 	SYSMON_CHAN0_CLR();				//Clear LA Channel 0
 
 	for (;;) {
+
+		taskENTER_CRITICAL();
 		SYSMON_CHAN0_SET();			//Set LA Channel 0	
 		BRD_LEDGreenToggle();		//Random instruction	
 
 		vTaskDelay(3);			//Extra Delay for 3ms	
 		SYSMON_CHAN0_CLR();			//Clear LA Channel 0	
         
-		vTaskDelay(1);			//Mandatory delay ONLY for 	
-											//Task 1&2 (REMOVE FOR TASK 3)
+		taskEXIT_CRITICAL();
 	}
 }
 
@@ -111,17 +115,20 @@ void Task1_Task( void ) {
  */
 void Task2_Task( void ) {
 
+	hardware_init();
+
 	SYSMON_CHAN1_CLR();				//Clear LA Channel 1
 
 	for (;;) {
+
+		taskENTER_CRITICAL();
 		SYSMON_CHAN1_SET();			//Set LA Channel 1	
 		BRD_LEDGreenToggle();		//Random instruction	
 
-		vTaskDelay(3);			//Extra Delay for 3ms	
+		vTaskDelay(3);				//Extra Delay for 3ms	
 		SYSMON_CHAN1_CLR();			//Clear LA Channel 1	
         
-		vTaskDelay(1);			//Mandatory delay ONLY for 	
-											//Task 1&2 (REMOVE FOR TASK 3)
+		taskEXIT_CRITICAL();
 	}
 }
 
@@ -130,14 +137,18 @@ void Task2_Task( void ) {
  */
 void Task3_Task( void ) {
 
+	hardware_init();
+
 	SYSMON_CHAN2_CLR();				//Clear LA Channel 2
 
 	for (;;) {
+
+		taskENTER_CRITICAL();
 		SYSMON_CHAN2_SET();			//Set LA Channel 2	
 		BRD_LEDGreenToggle();		//Random instruction	
 
 		SYSMON_CHAN2_CLR();			//Clear LA Channel 2	
-        
+		taskEXIT_CRITICAL();
 	}
 }
 
@@ -146,7 +157,7 @@ void Task3_Task( void ) {
  */
 void hardware_init( void ) {
 
-	portDISABLE_INTERRUPTS();	//Disable interrupts
+	taskENTER_CRITICAL();	//Stop any interruption of the critical section
 
 	BRD_LEDInit();				//Initialise Green LED
 	BRD_LEDGreenOff();			//Turn off Green LED
@@ -197,5 +208,5 @@ void hardware_init( void ) {
   	SYSMON_CHAN2_GPIO->PUPDR &= ~(0x03 << (SYSMON_CHAN2_PIN * 2));   //Clear Bits
   	SYSMON_CHAN2_GPIO->PUPDR |= ((0x01) << (SYSMON_CHAN2_PIN * 2));  //Set for Pull down output
 
-	portENABLE_INTERRUPTS();	//Enable interrupts
+	taskEXIT_CRITICAL();
 }
