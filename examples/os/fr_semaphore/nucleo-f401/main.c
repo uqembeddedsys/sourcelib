@@ -147,7 +147,7 @@ void takeTask( void ) {
  */
 static void hardware_init( void ) {
 
-	portDISABLE_INTERRUPTS();	//Disable interrupts
+	taskENTER_CRITICAL();	//Stop any interruption of the critical section
 
 	BRD_LEDInit();				//Initialise Green LED
 
@@ -176,7 +176,7 @@ static void hardware_init( void ) {
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 10, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
-	portENABLE_INTERRUPTS();	//Enable interrupts
+	taskEXIT_CRITICAL();
 }
 
 /*

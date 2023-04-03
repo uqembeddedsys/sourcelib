@@ -22,7 +22,7 @@
 
 EventGroupHandle_t ledctrlEventGroup;		//Control Event Group
 
-static void hardware_init();
+void hardware_init();
 void ApplicationIdleHook( void ); // The idle hook is just used to stream data to the USB port.
 void giveTask( void );
 void takeTask( void );
@@ -64,11 +64,9 @@ int main( void ) {
   	return 0;
 }
 
-/**
-  * @brief  Give Task. Set LED ON and OFF events every second.
-  * @param  None
-  * @retval None
-  */
+/*
+ * Give Task. Set LED ON and OFF events every second.
+ */
 void giveTask( void ) {
 
 	EventBits_t uxBits;
@@ -135,20 +133,15 @@ void takeTask( void ) {
 }
 
 
-/**
-  * @brief  Hardware Initialisation.
-  * @param  None
-  * @retval None
-  */
-static void hardware_init( void ) {
+/*
+ * Hardware Initialisation.
+ */
+void hardware_init( void ) {
 
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	portDISABLE_INTERRUPTS();	//Disable interrupts
+	taskENTER_CRITICAL();	//Stop any interruption of the critical section
 
 	BRD_LEDInit();				//Initialise Green LED
 	BRD_LEDGreenOff();				//Turn off Green LED
 
-	portENABLE_INTERRUPTS();	//Enable interrupts
-
+	taskEXIT_CRITICAL();
 }
