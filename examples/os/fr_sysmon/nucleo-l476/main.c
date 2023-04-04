@@ -97,14 +97,12 @@ void Task1_Task( void ) {
 
 	for (;;) {
 
-		taskENTER_CRITICAL();
 		SYSMON_CHAN0_SET();			//Set LA Channel 0	
 		BRD_LEDGreenToggle();		//Random instruction	
 
 		vTaskDelay(3);			//Extra Delay for 3ms	
 		SYSMON_CHAN0_CLR();			//Clear LA Channel 0	
         
-		taskEXIT_CRITICAL();
 	}
 }
 
@@ -119,14 +117,12 @@ void Task2_Task( void ) {
 
 	for (;;) {
 
-		taskENTER_CRITICAL();
 		SYSMON_CHAN1_SET();			//Set LA Channel 1	
 		BRD_LEDGreenToggle();		//Random instruction	
 
 		vTaskDelay(3);				//Extra Delay for 3ms	
 		SYSMON_CHAN1_CLR();			//Clear LA Channel 1	
         
-		taskEXIT_CRITICAL();
 	}
 }
 
@@ -141,12 +137,10 @@ void Task3_Task( void ) {
 
 	for (;;) {
 
-		taskENTER_CRITICAL();
 		SYSMON_CHAN2_SET();			//Set LA Channel 2	
 		BRD_LEDGreenToggle();		//Random instruction	
 
 		SYSMON_CHAN2_CLR();			//Clear LA Channel 2	
-		taskEXIT_CRITICAL();
 	}
 }
 
