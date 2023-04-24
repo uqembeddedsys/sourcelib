@@ -14,10 +14,14 @@ void BRD_delayInit() {
 	HAL_Init();
 	BRD_debuguart_init();
 
-	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-	DWT->CYCCNT = 0;
+	//CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 
-	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; // Start DWT cycle counter used for HAL_Delayus();
+	//DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; // Start DWT cycle counter used for HAL_Delayus();
+	//DWT->CYCCNT = 0;
+
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CYCCNT = 0;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
 
 }
@@ -211,10 +215,14 @@ unsigned char BRD_debuguart_getc() {
 
 void HAL_Delayus(uint32_t us) {
 	volatile uint32_t cycles = (SystemCoreClock/1000000L)*us;
-	volatile uint32_t start = DWT->CYCCNT;
+	volatile uint32_t start =  DWT->CYCCNT;
 	do {
-
+//__ASM volatile ("NOP");
+  //  __ASM volatile ("NOP");
+    //__ASM volatile ("NOP");
+	//	start++;
 	} while(DWT->CYCCNT - start < cycles);
+	//}while(start < cycles); //while(DWT->CYCCNT - start < cycles);
 
 }
 

@@ -26,7 +26,11 @@ mflash:
 	python3 ${SOURCELIB_ROOT}/tools/programming/flash.py --bin main.bin --addr 0x08000000 --mcu STM32F429ZI --type SWD --speed 400 --erase --rst
 
 flash:
-	echo "r\nh\nloadfile main.hex \nr\nexit\n" | JLinkExe -device STM32F429ZI -if swd -speed 4800
+	echo "r\nh\nloadfile main.hex \n connect\n exit\n" | JLinkExe -device STM32F429ZI -if swd -speed 4800
+
+run:
+	echo "\nconnect\n\rexit\n" | JLinkExe -device STM32F429ZI -if swd -speed 4800
+	
 
 clean:
 	rm -f *.o
