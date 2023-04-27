@@ -135,8 +135,6 @@
 #define NRF24L01P_TX_ADR_WIDTH    5   // 5 unsigned chars TX(RX) address width
 #define NRF24L01P_TX_PLOAD_WIDTH  32  // 32 unsigned chars TX payload
 
-#define NRF24L01P_RF_CHANNEL_DEFAULT	76   //40
-
 // SPI(nRF24L01) commands
 #define NRF24L01P_READ_REG        0x00	// Define read command to register
 #define NRF24L01P_WRITE_REG       0x20	// Define write command to register

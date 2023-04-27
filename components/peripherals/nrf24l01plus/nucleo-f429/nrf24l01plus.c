@@ -14,15 +14,17 @@
 #include "processor_hal.h"
 #include "nrf24l01plus.h"
 
-//#define DEBUG	1	//debug enable messages
-
 #ifdef DEBUG
 #include "debug_log.h"
 #endif
 
-
-
-uint8_t default_addr[] = {0x12, 0x34, 0x56, 0x78, 0x90};
+//Set default channel and addreess from either a file or directly set.
+#ifdef MYCONFIG
+#include "myconfig.h"
+#else
+	#define DEFAULT_RF_CHANNEL	40								//Default radio channel
+	uint8_t default_addr[] = {0x12, 0x34, 0x56, 0x78, 0x90};	//Default address with MSB first
+#endif
 
 static SPI_HandleTypeDef SpiHandle;
 
@@ -36,7 +38,7 @@ void nrf24l01plus_spi_init() {
 	GPIO_InitTypeDef GPIO_spi;
 
 	/* Initialise SPI and Pin clocks*/
-	__NRF_SPI_CLK();	//__SPI1_CLK_ENABLE();
+	__NRF_SPI_CLK();
 
 	__NRF_SPI_SCK_GPIO_CLK();
 	__NRF_SPI_MISO_GPIO_CLK();
@@ -73,14 +75,14 @@ void nrf24l01plus_spi_init() {
 	 __HAL_SPI_DISABLE(&SpiHandle);
 
   SpiHandle.Init.Mode              = SPI_MODE_MASTER;
-  SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32; //56;
+  SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32; //SPI_BAUDRATEPRESCALER_32; //56;
   SpiHandle.Init.Direction         = SPI_DIRECTION_2LINES;
   SpiHandle.Init.CLKPhase          = SPI_PHASE_1EDGE;
   SpiHandle.Init.CLKPolarity       = SPI_POLARITY_LOW;
   SpiHandle.Init.CRCCalculation    = SPI_CRCCALCULATION_DISABLED;
   SpiHandle.Init.CRCPolynomial     = 0; //7;
   SpiHandle.Init.DataSize          = SPI_DATASIZE_8BIT;
-  SpiHandle.Init.FirstBit          = SPI_FIRSTBIT_MSB;
+  SpiHandle.Init.FirstBit          = SPI_FIRSTBIT_MSB;		//MSB
   SpiHandle.Init.NSS               = SPI_NSS_SOFT;
   SpiHandle.Init.TIMode            = SPI_TIMODE_DISABLED;
 
@@ -112,8 +114,6 @@ void nrf24l01plus_spi_init() {
 	HAL_GPIO_Init(NRF_IRQ_GPIO_PORT, &GPIO_spi);	//Initialise Pin
 #endif
 
-
-
 	/* Set chip select high */
 	NRF_CS_HIGH();
 }
@@ -142,7 +142,7 @@ void nrf24l01plus_init() {
   	nrf24l01plus_wr(NRF24L01P_RX_PW_P0, NRF24L01P_TX_PLOAD_WIDTH); 	// Select same RX payload width as TX Payload width
 
   	//SPI_Write_Reg(WRITE_REG + SETUP_RETR, 0x1a);       // 500us + 86us, 10 retransmissions. (not needed - no auto ack)
-  	nrf24l01plus_wr(NRF24L01P_RF_CH, NRF24L01P_RF_CHANNEL_DEFAULT); 	// Select RF channel
+  	nrf24l01plus_wr(NRF24L01P_RF_CH, DEFAULT_RF_CHANNEL); 	// Select RF channel
   	nrf24l01plus_wr(NRF24L01P_RF_SETUP, 0x06);   							// TX_PWR:0dBm, Datarate:1Mbps
 
 //#ifdef NRF_IRQ_ENABLE
@@ -152,7 +152,6 @@ void nrf24l01plus_init() {
 	nrf24l01plus_wr(NRF24L01P_CONFIG, 0x02);	     							// Set PWR_UP bit, enable CRC(2 unsigned chars) & Prim:TX. MAX_RT & TX_DS enabled..
 //#endif
 }
-
 
 
 /**
@@ -341,11 +340,12 @@ int nrf24l01plus_recv(uint8_t *rx_buf) {
   */
 void nrf24l01plus_send(uint8_t *tx_buf) {
 
+
 	nrf24l01plus_wr(NRF24L01P_CONFIG, 0x72);     // Set PWR_UP bit, disable CRC(2 unsigned chars) & Prim:TX.
 	nrf24l01plus_wb(NRF24L01P_WR_TX_PLOAD, tx_buf, NRF24L01P_TX_PLOAD_WIDTH);   // write playload to TX_FIFO
 
 	NRF_CE_LOW();
-	HAL_Delayus(20);
+	HAL_Delayus(20);	
 	NRF_CE_HIGH();
 	HAL_Delayus(20); // Send one packet
 	NRF_CE_LOW();
