@@ -21,6 +21,10 @@
 //Set default channel and addreess from either a file or directly set.
 #ifdef MYCONFIG
 #include "myconfig.h"
+#ifdef MYRADIOCHAN
+	#define DEFAULT_RF_CHANNEL MYRADIOCHAN
+	#define default_addr myradiotxaddr
+#endif
 #else
 #define DEFAULT_RF_CHANNEL	40								//Default radio channel
 uint8_t default_addr[] = {0x12, 0x34, 0x56, 0x78, 0x90};	//Default address with MSB first
