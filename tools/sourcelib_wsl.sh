@@ -7,6 +7,7 @@ sudo apt-get install -y gdb-arm-none-eabi
 sudo apt-get install -y libnewlib-arm-none-eabi	#Install ARM new library
 #sudo apt-get remove modemmanager brltty	#Remove serial terminal interference
 sudo adduser $USER dialout		#Add user permissions for dialout
+sudo apt-get install -y libxkbcommon-x11-0
 sudo apt --fix-broken install -y
 sudo apt-get install -y python3-pip
 mkdir /mnt/c/csse3010/Downloads
