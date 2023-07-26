@@ -15,4 +15,4 @@ wget -O /mnt/c/csse3010/Downloads/JLink_Linux_V762_x86_64.deb https://cloudstor.
 sudo dpkg -i /mnt/c/csse3010/Downloads/JLink_Linux_V762_x86_64.deb
 sudo python3 -m pip install pylink-square
 sudo ln -s /usr/bin/gdb-multiarch /usr/local/bin/arm-none-eabi-gdb
-/bin/bash $PWD/sourcelib_env_wsl.sh
+/bin/bash $PWD/sourcelib_env_linux.sh
