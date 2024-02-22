@@ -8,6 +8,7 @@
 #define BOARD_BOARD_H
 
 #include <stdio.h>
+#include <stdint.h>
 
 /**********************  BOARD LEDs  *****************************/
 
