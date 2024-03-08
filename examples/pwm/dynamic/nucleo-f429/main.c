@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    pwm/dynamic/
-  * @author  MDS & SC
+  * @authors MDS & SMVC
   * @date    08032023
   * @brief   Enable a static (not changing) PWM output on Board Pin D5 (PE11).
   *			 See Section 18 (TIM1), P592 of the STM32F4xx Reference Manual.
