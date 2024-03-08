@@ -79,7 +79,7 @@ void hardware_init(void) {
 	TIM1->CR1  |= (TIM_CR1_ARPE); 	// Set Auto-Reload Preload Enable 
 	TIM1->CCER |= TIM_CCER_CC2E; 	// Set CC2E Bit 
 	TIM1->CCER &= ~TIM_CCER_CC2NE; 	// Clear CC2NE Bit for active high output 
-	
+		
 	/* Set Main Output Enable (MOE) bit
 	   Set Off-State Selection for Run mode (OSSR) bit
 	   Set Off-State Selection for Idle mode (OSSI) bit */

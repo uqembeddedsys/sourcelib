@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
   * @file    pwm/dynamic/
-  * @author  MDS
-  * @date    02032018
+  * @author  MDS & SC
+  * @date    08032023
   * @brief   Enable a static (not changing) PWM output on Board Pin D5 (PE11).
   *			 See Section 18 (TIM1), P592 of the STM32F4xx Reference Manual.
   *			 Multi-Functional Shield (MFS) Pin PWM signal (~5)
@@ -88,6 +88,10 @@ void hardware_init(void) {
 	TIM1->CR1  |= (TIM_CR1_ARPE); 	// Set Auto-Reload Preload Enable 
 	TIM1->CCER |= TIM_CCER_CC2E; 	// Set CC2E Bit
 	TIM1->CCER &= ~TIM_CCER_CC2NE; 	// Clear CC2NE Bit for active high output
+
+	TIM1->CCER &= ~TIM_CCER_CC2P; 	// Polarity of PWM output waveform is active high. 
+									// If set, reverses polarity (e.g. high becomes low).
+									// See p576 of the STM32F429 reference manual
 	
 	/* Set Main Output Enable (MOE) bit
 	   Set Off-State Selection for Run mode (OSSR) bit
