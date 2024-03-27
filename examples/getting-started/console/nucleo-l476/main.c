@@ -48,7 +48,7 @@ int main(void)  {
     }
 
     //Check for key press (other than null character)
-    if ((recvChar = BRD_debuguart_getc()) != '\0') {
+    if ((recvChar = BRD_debuguart_getc(10)) != '\0') {
 
       BRD_LEDGreenToggle();
 

@@ -37,7 +37,7 @@ unsigned char debug_getc(void) {
 	uint8_t c = '\0';
 
 
-	c = BRD_debuguart_getc();
+	c = BRD_debuguart_getc(10);
 
 	return c;
 }
@@ -80,7 +80,7 @@ GETCHAR_PROTOTYPE
 {
 	uint8_t c = '\0';
 
-	c = BRD_debuguart_getc();
+	c = BRD_debuguart_getc(10);
 
 	//if (c != '\0') {
 	//	return -1;
