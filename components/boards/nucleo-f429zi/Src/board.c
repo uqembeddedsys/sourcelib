@@ -206,6 +206,8 @@ unsigned char BRD_debuguart_getc(int blocktime) {
 	//Non Block receive - 0 delay (set to HAL_MAX_DELAY for blocking)
 	if (blocktime == 0) { 
 		rx_char = UART_debug.Instance->DR;
+		__HAL_UART_FLUSH_DRREGISTER(&UART_debug);
+		return rx_char;
 	} else {
 	if (HAL_UART_Receive(&UART_debug, &rx_char, 1, blocktime) == HAL_OK) {
 		return rx_char;
