@@ -203,20 +203,11 @@ unsigned char BRD_debuguart_getc(int blocktime) {
 
 	uint8_t rx_char = '\0';
 
-	if (blocktime == 0) {
-		
-		if (HAL_UART_Receive_IT(&UART_debug, &rx_char, 1) == HAL_OK) {
-			return rx_char;
-		}
-
+	//Non Block receive - 0 delay (set to HAL_MAX_DELAY for blocking)
+	if (HAL_UART_Receive(&UART_debug, &rx_char, 1, blocktime) == HAL_OK) {
+		return rx_char;
 	} else {
-
-		//Non Block receive - 0 delay (set to HAL_MAX_DELAY for blocking)
-		if (HAL_UART_Receive(&UART_debug, &rx_char, 1, blocktime) == HAL_OK) {
-			return rx_char;
-		} else {
-			return '\0';
-		}
+		return '\0';
 	}
 
 	//return (uint8_t)(__HAL_UART_FLUSH_DRREGISTER(&UART_debug) & (uint8_t)0x00FF);
