@@ -8,7 +8,7 @@
  * 			NOTE: This example does not send or receive with the nrf24L01+.
  * 			CONNECTION: nrf24l01plus MUST be connected to the Side Board RA connector.
  * 			REFERENCE: nrf24L01plus datasheet
- * 			pins: CE - D9
+ * 			pins: CE - D9 (If MFS connected, pin is D9 but labeled ~9 on the PWM out pins)
  * 			MISO, MOSI, SCK and CSN - use side board RA connector (See lab 1.4)
  * 
  * 			IMPORTANT NOTE: You must power-cycle your board before it will work. 
