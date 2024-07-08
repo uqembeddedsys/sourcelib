@@ -135,6 +135,7 @@ unsigned char debug_getuc(void);
 #define BRD_SPI_B_CS_GPIO_PORT GPIOA
 #define BRD_SPI_B_CS_AF GPIO_AF6_SPI3
 #define __BRD_SPI_B_CS_GPIO_CLK() __GPIOA_CLK_ENABLE()
+
 /*********************  SPI Signals For RA (on sideboard) **************************/
 #ifndef	NOSIDEBOARD
 
@@ -163,6 +164,60 @@ unsigned char debug_getuc(void);
 
 #endif
 
+/*********************  GPIO Signals for sysmon **************************/
+#ifndef	NOSYSMON
+
+//System monitor pins
+#ifndef SYSMON_CHAN0_PIN
+#define SYSMON_CHAN0_PIN		9
+#endif
+
+#ifndef SYSMON_CHAN0_GPIO
+#define SYSMON_CHAN0_GPIO		GPIOG
+#endif
+
+#ifndef SYSMON_CHAN0_GPIO_CLK()
+#define SYSMON_CHAN0_GPIO_CLK()	__GPIOG_CLK_ENABLE()
+#endif
+
+#ifndef SYSMON_CHAN1_PIN
+#define SYSMON_CHAN1_PIN		14
+#endif
+
+#ifndef SYSMON_CHAN1_GPIO
+#define SYSMON_CHAN1_GPIO		GPIOG
+#endif
+
+#ifndef SYSMON_CHAN1_GPIO_CLK()
+#define SYSMON_CHAN1_GPIO_CLK()	__GPIOG_CLK_ENABLE()
+#endif
+
+#ifndef SYSMON_CHAN2_PIN
+#define SYSMON_CHAN2_PIN		15
+#endif
+
+#ifndef SYSMON_CHAN2_GPIO
+#define SYSMON_CHAN2_GPIO		GPIOF
+#endif
+
+#ifndef SYSMON_CHAN2_GPIO_CLK()
+#define SYSMON_CHAN2_GPIO_CLK()	__GPIOF_CLK_ENABLE()
+#endif
+
+//System monitor macros for set clear and toggle
+#define SYSMON_CHAN0_SET()		SYSMON_CHAN0_GPIO->ODR |= (0x01 << SYSMON_CHAN0_PIN);
+#define SYSMON_CHAN0_CLR()		SYSMON_CHAN0_GPIO->ODR &= ~(0x01 << SYSMON_CHAN0_PIN);
+#define SYSMON_CHAN0_TOGGLE()	SYSMON_CHAN0_GPIO->ODR ^= (0x01 << SYSMON_CHAN0_PIN);
+
+#define SYSMON_CHAN1_SET()		SYSMON_CHAN1_GPIO->ODR |= (0x01 << SYSMON_CHAN1_PIN);
+#define SYSMON_CHAN1_CLR()		SYSMON_CHAN1_GPIO->ODR &= ~(0x01 << SYSMON_CHAN1_PIN);
+#define SYSMON_CHAN1_TOGGLE()	SYSMON_CHAN0_GPIO->ODR ^= (0x01 << SYSMON_CHAN1_PIN);
+
+#define SYSMON_CHAN2_SET()		SYSMON_CHAN2_GPIO->ODR |= (0x01 << SYSMON_CHAN2_PIN);
+#define SYSMON_CHAN2_CLR()		SYSMON_CHAN2_GPIO->ODR &= ~(0x01 << SYSMON_CHAN2_PIN);
+#define SYSMON_CHAN2_TOGGLE()	SYSMON_CHAN0_GPIO->ODR ^= (0x01 << SYSMON_CHAN2_PIN);
+
+#endif
 
 void BRD_delayInit();
 void HAL_Delayus(uint32_t us);

@@ -12,7 +12,14 @@
 void BRD_delayInit() {
 
 	HAL_Init();
+
+#ifndef NODEBUGUART
 	BRD_debuguart_init();
+#endif
+
+#ifndef NOSYSMON
+	sysmon_init();
+#endif
 
 	//CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 
@@ -121,7 +128,7 @@ UART_HandleTypeDef UART_debug;
 /* Initialise Debug UART */
 void BRD_debuguart_init() {
 
-#ifdef ENABLE_DEBUG_UART
+#ifndef NODEBUGUART
 
 	//Enable DEBUG UART clock
 	__BRD_DEBUG_UART_CLK();
@@ -164,7 +171,6 @@ void BRD_debuguart_init() {
 //Transmit char through debug uart and USB, if enabled
 void BRD_debuguart_putc(unsigned char c)
 {
-	//__HAL_UART_FLUSH_DRREGISTER(&UART_debug) = (uint8_t) c;
 	HAL_UART_Transmit(&UART_debug, &c, 1, 0xFFFF);
     __HAL_UART_FLUSH_DRREGISTER(&UART_debug);
 }
@@ -239,3 +245,51 @@ void HAL_Delayus(uint32_t us) {
 
 }
 
+void sysmon_init() {
+
+	// Enable the GPIO G Clock
+  	SYSMON_CHAN0_GPIO_CLK();
+
+  	//Initialise G9 as an output.
+  	SYSMON_CHAN0_GPIO->MODER &= ~(0x03 << (SYSMON_CHAN0_PIN * 2));  //clear bits
+  	SYSMON_CHAN0_GPIO->MODER |= (0x01 << (SYSMON_CHAN0_PIN * 2));   //Set for push pull
+
+  	SYSMON_CHAN0_GPIO->OSPEEDR &= ~(0x03<<(SYSMON_CHAN0_PIN * 2));
+	SYSMON_CHAN0_GPIO->OSPEEDR |=   0x02<<(SYSMON_CHAN0_PIN * 2);  // Set for Fast speed
+
+  	SYSMON_CHAN0_GPIO->OTYPER &= ~(0x01 << SYSMON_CHAN0_PIN);       //Clear Bit for Push/Pull utput
+
+  	// Activate the Pull-up or Pull down resistor for the current IO
+  	SYSMON_CHAN0_GPIO->PUPDR &= ~(0x03 << (SYSMON_CHAN0_PIN * 2));   //Clear Bits
+  	SYSMON_CHAN0_GPIO->PUPDR |= ((0x01) << (SYSMON_CHAN0_PIN * 2));  //Set for Pull down output
+  
+	SYSMON_CHAN1_GPIO_CLK();
+
+  	//Initialise G9 as an output.
+  	SYSMON_CHAN1_GPIO->MODER &= ~(0x03 << (SYSMON_CHAN1_PIN * 2));  //clear bits
+  	SYSMON_CHAN1_GPIO->MODER |= (0x01 << (SYSMON_CHAN1_PIN * 2));   //Set for push pull
+
+  	SYSMON_CHAN1_GPIO->OSPEEDR &= ~(0x03<<(SYSMON_CHAN1_PIN * 2));
+	SYSMON_CHAN1_GPIO->OSPEEDR |=   0x02<<(SYSMON_CHAN1_PIN * 2);  // Set for Fast speed
+
+  	SYSMON_CHAN1_GPIO->OTYPER &= ~(0x01 << SYSMON_CHAN1_PIN);       //Clear Bit for Push/Pull utput
+
+  	// Activate the Pull-up or Pull down resistor for the current IO
+  	SYSMON_CHAN1_GPIO->PUPDR &= ~(0x03 << (SYSMON_CHAN1_PIN * 2));   //Clear Bits
+  	SYSMON_CHAN1_GPIO->PUPDR |= ((0x01) << (SYSMON_CHAN1_PIN * 2));  //Set for Pull down output
+
+	SYSMON_CHAN2_GPIO_CLK();
+
+  	//Initialise G9 as an output.
+  	SYSMON_CHAN2_GPIO->MODER &= ~(0x03 << (SYSMON_CHAN2_PIN * 2));  //clear bits
+  	SYSMON_CHAN2_GPIO->MODER |= (0x01 << (SYSMON_CHAN2_PIN * 2));   //Set for push pull
+
+  	SYSMON_CHAN2_GPIO->OSPEEDR &= ~(0x03<<(SYSMON_CHAN2_PIN * 2));
+	SYSMON_CHAN2_GPIO->OSPEEDR |=   0x02<<(SYSMON_CHAN2_PIN * 2);  // Set for Fast speed
+
+  	SYSMON_CHAN2_GPIO->OTYPER &= ~(0x01 << SYSMON_CHAN2_PIN);       //Clear Bit for Push/Pull utput
+
+  	// Activate the Pull-up or Pull down resistor for the current IO
+  	SYSMON_CHAN2_GPIO->PUPDR &= ~(0x03 << (SYSMON_CHAN2_PIN * 2));   //Clear Bits
+  	SYSMON_CHAN2_GPIO->PUPDR |= ((0x01) << (SYSMON_CHAN2_PIN * 2));  //Set for Pull down output
+}

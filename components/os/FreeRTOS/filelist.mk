@@ -10,4 +10,3 @@ CFLAGS += -DUSE_FREERTOS_SYSTICK
 CFLAGS += -I$(FREERTOS_PATH)/include -I$(FREERTOS_PATH)/portable/GCC/ARM_CM4F
 
 LIBSRCS += $(wildcard $(FREERTOS_PATH)/*.c) $(wildcard $(FREERTOS_PATH)/portable/GCC/ARM_CM4F/*.c)
-
