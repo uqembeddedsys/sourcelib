@@ -176,7 +176,7 @@ unsigned char debug_getuc(void);
 #define SYSMON_CHAN0_GPIO		GPIOG
 #endif
 
-#ifndef SYSMON_CHAN0_GPIO_CLK()
+#ifndef SYSMON_CHAN0_GPIO_CLK
 #define SYSMON_CHAN0_GPIO_CLK()	__GPIOG_CLK_ENABLE()
 #endif
 
@@ -188,7 +188,7 @@ unsigned char debug_getuc(void);
 #define SYSMON_CHAN1_GPIO		GPIOG
 #endif
 
-#ifndef SYSMON_CHAN1_GPIO_CLK()
+#ifndef SYSMON_CHAN1_GPIO_CLK
 #define SYSMON_CHAN1_GPIO_CLK()	__GPIOG_CLK_ENABLE()
 #endif
 
@@ -200,7 +200,7 @@ unsigned char debug_getuc(void);
 #define SYSMON_CHAN2_GPIO		GPIOF
 #endif
 
-#ifndef SYSMON_CHAN2_GPIO_CLK()
+#ifndef SYSMON_CHAN2_GPIO_CLK
 #define SYSMON_CHAN2_GPIO_CLK()	__GPIOF_CLK_ENABLE()
 #endif
 
@@ -216,6 +216,8 @@ unsigned char debug_getuc(void);
 #define SYSMON_CHAN2_SET()		SYSMON_CHAN2_GPIO->ODR |= (0x01 << SYSMON_CHAN2_PIN);
 #define SYSMON_CHAN2_CLR()		SYSMON_CHAN2_GPIO->ODR &= ~(0x01 << SYSMON_CHAN2_PIN);
 #define SYSMON_CHAN2_TOGGLE()	SYSMON_CHAN0_GPIO->ODR ^= (0x01 << SYSMON_CHAN2_PIN);
+
+void BRD_sysmon_init();
 
 #endif
 

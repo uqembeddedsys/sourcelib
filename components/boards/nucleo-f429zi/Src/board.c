@@ -18,7 +18,7 @@ void BRD_delayInit() {
 #endif
 
 #ifndef NOSYSMON
-	sysmon_init();
+	BRD_sysmon_init();
 #endif
 
 	//CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
@@ -245,7 +245,7 @@ void HAL_Delayus(uint32_t us) {
 
 }
 
-void sysmon_init() {
+void BRD_sysmon_init() {
 
 	// Enable the GPIO G Clock
   	SYSMON_CHAN0_GPIO_CLK();
