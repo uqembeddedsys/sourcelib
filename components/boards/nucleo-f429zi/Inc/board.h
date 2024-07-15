@@ -169,11 +169,11 @@ unsigned char debug_getuc(void);
 
 //System monitor pins
 #ifndef SYSMON_CHAN0_PIN
-#define SYSMON_CHAN0_PIN		9
+#define SYSMON_CHAN0_PIN		10
 #endif
 
 #ifndef SYSMON_CHAN0_GPIO
-#define SYSMON_CHAN0_GPIO		GPIOG
+#define SYSMON_CHAN0_GPIO		GPIOD
 #endif
 
 #ifndef SYSMON_CHAN0_GPIO_CLK
@@ -181,7 +181,7 @@ unsigned char debug_getuc(void);
 #endif
 
 #ifndef SYSMON_CHAN1_PIN
-#define SYSMON_CHAN1_PIN		14
+#define SYSMON_CHAN1_PIN		7
 #endif
 
 #ifndef SYSMON_CHAN1_GPIO
@@ -193,11 +193,11 @@ unsigned char debug_getuc(void);
 #endif
 
 #ifndef SYSMON_CHAN2_PIN
-#define SYSMON_CHAN2_PIN		15
+#define SYSMON_CHAN2_PIN		4
 #endif
 
 #ifndef SYSMON_CHAN2_GPIO
-#define SYSMON_CHAN2_GPIO		GPIOF
+#define SYSMON_CHAN2_GPIO		GPIOG
 #endif
 
 #ifndef SYSMON_CHAN2_GPIO_CLK

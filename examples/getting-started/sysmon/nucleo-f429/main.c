@@ -5,7 +5,7 @@
   * @date    16072024
   * @brief   Nucleo429ZI SYSMON and onboard LED flashing example. Uses the system time (ms) 
   *          and system delay (ms) to ensure that the LEDs toggle, every 2s. The 
-  *          SYSMON channels (0,1,2) are also toggled on pins: G9, G14, F15.
+  *          SYSMON channels (0,1,2) are also toggled on pins: CN12-65, CN12-67, CN12-69.
   ******************************************************************************
   */
 
