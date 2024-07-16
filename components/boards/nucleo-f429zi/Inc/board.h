@@ -169,11 +169,11 @@ unsigned char debug_getuc(void);
 
 //System monitor pins
 #ifndef SYSMON_CHAN0_PIN
-#define SYSMON_CHAN0_PIN		10
+#define SYSMON_CHAN0_PIN		14
 #endif
 
 #ifndef SYSMON_CHAN0_GPIO
-#define SYSMON_CHAN0_GPIO		GPIOD
+#define SYSMON_CHAN0_GPIO		GPIOG
 #endif
 
 #ifndef SYSMON_CHAN0_GPIO_CLK
@@ -181,15 +181,15 @@ unsigned char debug_getuc(void);
 #endif
 
 #ifndef SYSMON_CHAN1_PIN
-#define SYSMON_CHAN1_PIN		7
+#define SYSMON_CHAN1_PIN		10
 #endif
 
 #ifndef SYSMON_CHAN1_GPIO
-#define SYSMON_CHAN1_GPIO		GPIOG
+#define SYSMON_CHAN1_GPIO		GPIOD
 #endif
 
 #ifndef SYSMON_CHAN1_GPIO_CLK
-#define SYSMON_CHAN1_GPIO_CLK()	__GPIOG_CLK_ENABLE()
+#define SYSMON_CHAN1_GPIO_CLK()	__GPIOD_CLK_ENABLE()
 #endif
 
 #ifndef SYSMON_CHAN2_PIN
@@ -201,7 +201,7 @@ unsigned char debug_getuc(void);
 #endif
 
 #ifndef SYSMON_CHAN2_GPIO_CLK
-#define SYSMON_CHAN2_GPIO_CLK()	__GPIOF_CLK_ENABLE()
+#define SYSMON_CHAN2_GPIO_CLK()	__GPIOG_CLK_ENABLE()
 #endif
 
 //System monitor macros for set clear and toggle
@@ -211,11 +211,11 @@ unsigned char debug_getuc(void);
 
 #define SYSMON_CHAN1_SET()		SYSMON_CHAN1_GPIO->ODR |= (0x01 << SYSMON_CHAN1_PIN);
 #define SYSMON_CHAN1_CLR()		SYSMON_CHAN1_GPIO->ODR &= ~(0x01 << SYSMON_CHAN1_PIN);
-#define SYSMON_CHAN1_TOGGLE()	SYSMON_CHAN0_GPIO->ODR ^= (0x01 << SYSMON_CHAN1_PIN);
+#define SYSMON_CHAN1_TOGGLE()	SYSMON_CHAN1_GPIO->ODR ^= (0x01 << SYSMON_CHAN1_PIN);
 
 #define SYSMON_CHAN2_SET()		SYSMON_CHAN2_GPIO->ODR |= (0x01 << SYSMON_CHAN2_PIN);
 #define SYSMON_CHAN2_CLR()		SYSMON_CHAN2_GPIO->ODR &= ~(0x01 << SYSMON_CHAN2_PIN);
-#define SYSMON_CHAN2_TOGGLE()	SYSMON_CHAN0_GPIO->ODR ^= (0x01 << SYSMON_CHAN2_PIN);
+#define SYSMON_CHAN2_TOGGLE()	SYSMON_CHAN2_GPIO->ODR ^= (0x01 << SYSMON_CHAN2_PIN);
 
 void BRD_sysmon_init();
 

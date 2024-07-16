@@ -292,4 +292,16 @@ void BRD_sysmon_init() {
   	// Activate the Pull-up or Pull down resistor for the current IO
   	SYSMON_CHAN2_GPIO->PUPDR &= ~(0x03 << (SYSMON_CHAN2_PIN * 2));   //Clear Bits
   	SYSMON_CHAN2_GPIO->PUPDR |= ((0x01) << (SYSMON_CHAN2_PIN * 2));  //Set for Pull down output
+
+	//Set PG7 high, to turn off LD7 LD8 (LED usb low current)
+	__GPIOG_CLK_ENABLE();
+
+	// Initalise G7 as an input.
+  	GPIOG->MODER &= ~(0x03 << (7 * 2));			//Clear bits for input mode
+
+ 	GPIOG->OSPEEDR &= ~(0x03<<(7 * 2));
+	GPIOG->OSPEEDR |=   0x02<<(7 * 2);  // Fast speed
+
+	GPIOG->PUPDR &= ~(0x03 << (7 * 2));			//Clear bits for no push/pull
+  	GPIOG->PUPDR |= ((0x02) << (7 * 2));  //Set for Pull down output
 }

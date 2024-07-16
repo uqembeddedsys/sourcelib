@@ -5,7 +5,7 @@
   * @date    16072024
   * @brief   Nucleo429ZI SYSMON and onboard LED flashing example. Uses the system time (ms) 
   *          and system delay (ms) to ensure that the LEDs toggle, every 2s. The 
-  *          SYSMON channels (0,1,2) are also toggled on pins: CN12-65, CN12-67, CN12-69.
+  *          SYSMON channels (0,1,2) are also toggled on pins: CN12-61, CN12-65, CN12-69.
   ******************************************************************************
   */
 
@@ -29,8 +29,6 @@ int main(void)  {
 	// Main processing loop
   while (1) {
 
-    SYSMON_CHAN1_SET();
-
     // Toggle all LEDs and SYSMON channel 0, every 2 seconds
     if ((HAL_GetTick() - prev_tick) >= 2000) {
 		  BRD_LEDRedToggle();
@@ -38,14 +36,16 @@ int main(void)  {
 		  BRD_LEDBlueToggle();
 
       SYSMON_CHAN0_TOGGLE();
+      SYSMON_CHAN1_SET();
+
 
       prev_tick =  HAL_GetTick();
     }
 
 		HAL_Delay(1000);		//Delay for 1s
-    
+
     SYSMON_CHAN1_CLR();
-    SYSMON_CHAN2_SET();
+    SYSMON_CHAN2_TOGGLE();
 	}
 
   return 0;
