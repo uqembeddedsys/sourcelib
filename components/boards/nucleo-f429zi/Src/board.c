@@ -21,11 +21,6 @@ void BRD_delayInit() {
 	BRD_sysmon_init();
 #endif
 
-	//CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-
-	//DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; // Start DWT cycle counter used for HAL_Delayus();
-	//DWT->CYCCNT = 0;
-
 	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
     DWT->CYCCNT = 0;
     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
@@ -123,7 +118,7 @@ void BRD_LEDToggle(uint8_t ledmask) {
   }
 }
 
-UART_HandleTypeDef UART_debug;
+//UART_HandleTypeDef UART_debug;
 
 /* Initialise Debug UART */
 void BRD_debuguart_init() {
@@ -132,14 +127,6 @@ void BRD_debuguart_init() {
 
 	//Enable DEBUG UART clock
 	__BRD_DEBUG_UART_CLK();
-
-	UART_debug.Instance = (USART_TypeDef *)(BRD_DEBUG_UART);
-    UART_debug.Init.BaudRate   = BRD_DEBUG_UART_BAUDRATE;
-    UART_debug.Init.WordLength = UART_WORDLENGTH_8B;
-    UART_debug.Init.StopBits   = UART_STOPBITS_1;
-    UART_debug.Init.Parity     = UART_PARITY_NONE;
-    UART_debug.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-	UART_debug.Init.Mode = UART_MODE_TX_RX;
 
 	__BRD_DEBUG_UART_GPIO_CLK();
 
@@ -160,10 +147,39 @@ void BRD_debuguart_init() {
 	//Clear and set bits for no push/pull
 	MODIFY_REG(BRD_DEBUG_UART_GPIO->PUPDR, (0x03 << (BRD_DEBUG_UART_RX_PIN*2)) | (0x03 << (BRD_DEBUG_UART_TX_PIN*2)), (GPIO_PULLUP << (BRD_DEBUG_UART_RX_PIN*2)) | (GPIO_PULLUP << (BRD_DEBUG_UART_TX_PIN*2)));
 
+
+	// UART Settings - No hardware flow control, 8 data bits, no parity, 1 start bit and 1 stop bit		
+	// Enable USART clock
+	__BRD_DEBUG_UART_CLK();
+
+	CLEAR_BIT(BRD_DEBUG_UART->CR1, USART_CR1_UE);  // Disable USART
+	
+	// Configure word length to 8 bit
+	CLEAR_BIT(BRD_DEBUG_UART->CR1, USART_CR1_M);   // M: 00 = 8 data bits, 01 = 9 data bits, 10 = 7 data bits
+	
+	// Configure oversampling mode: Oversampling by 16 
+	CLEAR_BIT(BRD_DEBUG_UART->CR1, USART_CR1_OVER8);  // 0 = oversampling by 16, 1 = oversampling by 8
+	
+	SET_BIT(BRD_DEBUG_UART->CR1, USART_CR1_RE | USART_CR1_TE);  	// Transmitter and Receiver enable
+	CLEAR_BIT(BRD_DEBUG_UART->CR1, USART_CR1_PCE);						//Disable Parity
+
+	// Configure stop bits to 1 stop bit and siable clock output (USART mode only)
+	//   00: 1 Stop bit;      01: 0.5 Stop bit
+	//   10: 2 Stop bits;     11: 1.5 Stop bit   
+	CLEAR_BIT(BRD_DEBUG_UART->CR2, USART_CR2_CPHA | USART_CR2_CPOL | USART_CR2_CLKEN | USART_CR2_LBCL | USART_CR2_STOP);
+
+	// Set Baudrate to 115200 using APB frequency (80,000,000 Hz) and 16 bit sampling
+	// NOTE: If using USART1 or USART6, HAL_RCC_GetPCLK2Freq must be used.
+	WRITE_REG(BRD_DEBUG_UART->BRR, UART_BRR_SAMPLING16(HAL_RCC_GetPCLK1Freq(), BRD_DEBUG_UART_BAUDRATE));
+
+	//Disable handshaing signals
+	CLEAR_BIT(BRD_DEBUG_UART->CR3, USART_CR3_RTSE | USART_CR3_CTSE | USART_CR3_SCEN | USART_CR3_HDSEL | USART_CR3_IREN);
+
+	SET_BIT(BRD_DEBUG_UART->CR1, USART_CR1_UE); // UART enable   v
+
     //Allow stdio stdout buffer to be used for print, putc, etc.
     setbuf(stdout, NULL);
 
-	HAL_UART_Init(&UART_debug);		//Initialise DEBUG UART
 #endif
 
 }
@@ -171,8 +187,12 @@ void BRD_debuguart_init() {
 //Transmit char through debug uart and USB, if enabled
 void BRD_debuguart_putc(unsigned char c)
 {
-	HAL_UART_Transmit(&UART_debug, &c, 1, 0xFFFF);
-    __HAL_UART_FLUSH_DRREGISTER(&UART_debug);
+	WRITE_REG(BRD_DEBUG_UART->DR, (unsigned char) c);
+
+	// Wait for the character to be sent.
+	while((READ_REG(BRD_DEBUG_UART->SR) & USART_SR_TC) == 0);	//wait for transmission to complete
+
+
 }
 
 //#pragma GCC diagnostic push
@@ -183,23 +203,25 @@ void BRD_debuguart_puts(unsigned char *c)
 	int i;
 
 	for (i = 0; i < (int) strlen(c); i++) {
-	__HAL_UART_FLUSH_DRREGISTER(&UART_debug) = (uint8_t) (*(c + i));
+		WRITE_REG(BRD_DEBUG_UART->DR, (unsigned char) (*(c + i)));
+		while((READ_REG(BRD_DEBUG_UART->SR) & USART_SR_TC) == 0);	//wait for transmission to complete
 
 	}
 
 }
 //#pragma GCC diagnostic pop
 
-//Transmit message through debug uart and USB, if enabled
+//Transmit message through debug uart if enabled
 void BRD_debuguart_putm(unsigned char *c, int len)
 {
-	// int i;
-	// for (i = 0; i < len; i++) {
-	// __HAL_UART_FLUSH_DRREGISTER(&UART_debug) = (uint8_t) (*(c + i));
-	// }
+	int i;
 
-	HAL_UART_Transmit(&UART_debug, c, len, 0xFFFF);
-    __HAL_UART_FLUSH_DRREGISTER(&UART_debug);
+	for (i = 0; i < len; i++) {
+	//__HAL_UART_FLUSH_DRREGISTER(&UART_debug) = (uint8_t) (*(c + i));
+		WRITE_REG(BRD_DEBUG_UART->DR, (unsigned char) (*(c + i)));
+		while((READ_REG(BRD_DEBUG_UART->SR) & USART_SR_TC) == 0);	//wait for transmission to complete
+
+	}
 
 }
 
@@ -208,28 +230,31 @@ void BRD_debuguart_putm(unsigned char *c, int len)
 unsigned char BRD_debuguart_getc(int blocktime) {
 
 	uint8_t rx_char = '\0';
+	uint32_t prev_tick = 0;
 
-	//Non Block receive - 0 delay (set to HAL_MAX_DELAY for blocking)
-	if (blocktime == 0) { 
+	//Check if the blocktime is valid.
+	if (blocktime > 0) {
 
-		if ((UART_debug.Instance->SR & USART_SR_RXNE) != 0) {
-			rx_char = UART_debug.Instance->DR;
-		} else {
-			rx_char = '\0';
+		prev_tick = HAL_GetTick();		//Get current time
+		
+		//Implement block time
+		while ((HAL_GetTick() - prev_tick) < blocktime) {
+
+			//If byte received, return immediately.
+			if ((BRD_DEBUG_UART->SR & USART_SR_RXNE) != 0){
+				rx_char = READ_REG(BRD_DEBUG_UART->DR);
+				return rx_char;
+			}
 		}
-
-		__HAL_UART_FLUSH_DRREGISTER(&UART_debug);
-
-		return rx_char;
 	} else {
-	if (HAL_UART_Receive(&UART_debug, &rx_char, 1, blocktime) == HAL_OK) {
-		return rx_char;
-	} else {
-		return '\0';
+		//If byte received, return immediately.
+		if ((BRD_DEBUG_UART->SR & USART_SR_RXNE) != 0){
+			rx_char = READ_REG(BRD_DEBUG_UART->DR);
+			return rx_char;
+		}
 	}
-}
-
-	//return (uint8_t)(__HAL_UART_FLUSH_DRREGISTER(&UART_debug) & (uint8_t)0x00FF);
+	
+	return rx_char;
 }
 
 void HAL_Delayus(uint32_t us) {

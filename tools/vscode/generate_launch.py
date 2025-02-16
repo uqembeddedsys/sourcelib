@@ -12,6 +12,8 @@ launch_template = {
 
 if __name__ == "__main__":
 
+    print("launch called")
+
     parser = argparse.ArgumentParser(description='Generate launch.json file for vscode for given application')
     parser.add_argument('--debugger', dest='debugger', required=True, choices=["cortex-debug", "cppdbg"], help='Debugger mode to use')
     parser.add_argument('--elf', dest='elf', required=True, help='Path to the .elf file')
@@ -27,6 +29,7 @@ if __name__ == "__main__":
     
     # Embedded targets
     if args.debugger == "cortex-debug":
+        print("debug if")
         base_config['device'] = args.device
         base_config['executable'] = args.elf
         base_config['servertype'] = "jlink"

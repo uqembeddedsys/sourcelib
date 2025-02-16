@@ -94,5 +94,6 @@ void debug_log (const char *fmt, ...) {
 	  vprintf (fmt, args);
 
 	  va_end (args);
+//printf(fmt);
 }
 
