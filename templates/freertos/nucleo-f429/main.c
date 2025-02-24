@@ -5,7 +5,7 @@
   * Date:    04022018
   * Brief:   FreeRTOS Task template
   *
-  * Reference: DONT_COPY_BLINDLY.pdf
+  * REFERENCE: DON'T JUST COPY THIS BLINDLY.pdf 
   ******************************************************************************
   *
   */
