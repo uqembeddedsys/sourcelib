@@ -1,10 +1,11 @@
 /**
   ******************************************************************************
-  * @file    blink/main.c
-  * @author  MDS
-  * @date    17022022
-  * @brief   Nucleo429ZI onboard LED flashing example. Uses the system time (ms) 
+  * File:    blink/main.c
+  * Author:  MY_NAME_IS
+  * Date:    17022022
+  * Brief:   Nucleo429ZI onboard LED flashing example. Uses the system time (ms) 
   *          and system delay (ms) to ensure that the LEDs toggle, every 2s.
+  * REFERENCE: DON'T JUST COPY THIS BLINDLY.pdf
   ******************************************************************************
   */
 
@@ -15,7 +16,9 @@ void hardware_init(void);
 
 /*
  * Main program - flashes onboard LEDs
- */int main(void)  {
+ */
+int main(void)  
+{
 
   uint32_t prev_tick;
 
@@ -43,7 +46,8 @@ void hardware_init(void);
 /*
  * Initialise Hardware
  */
-void hardware_init(void) {
+void hardware_init(void) 
+{
 
 	BRD_LEDInit();		//Initialise LEDS
 
