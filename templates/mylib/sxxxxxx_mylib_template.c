@@ -1,9 +1,9 @@
  /** 
  **************************************************************
- * @file mylib/sxxxxxx_mylib_template.c
- * @author MyName - MyStudent ID
- * @date 22022022
- * @brief mylib template driver
+ * File: mylib/sxxxxxx_mylib_template.c
+ * Author: MyName - MyStudent ID
+ * Date: 22022022
+ * Brief: mylib template driver
  * REFERENCE: DON'T JUST COPY THIS BLINDLY.pdf 
  ***************************************************************
  * EXTERNAL FUNCTIONS 
