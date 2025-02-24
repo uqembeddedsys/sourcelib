@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    freertos/template/main.c
-  * @author  MDS
-  * @date    04022018
-  * @brief   FreeRTOS Task template
+  * File:    freertos/template/main.c
+  * Author:  MY_NAME_IS
+  * Date:    04022018
+  * Brief:   FreeRTOS Task template
   *
-  * 		 Note: only HAL_Init must be called before
+  * Reference: DONT_COPY_BLINDLY.pdf
   ******************************************************************************
   *
   */
