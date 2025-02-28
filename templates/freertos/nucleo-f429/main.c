@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    freertos/template/main.c
-  * @author  MDS
-  * @date    04022018
-  * @brief   FreeRTOS Task template
+  * File:    freertos/template/main.c
+  * Author:  MY_NAME_IS
+  * Date:    04022018
+  * Brief:   FreeRTOS Task template
   *
-  * 		 Note: only HAL_Init must be called before
+  * REFERENCE: DON'T JUST COPY THIS BLINDLY.pdf 
   ******************************************************************************
   *
   */
@@ -29,7 +29,8 @@ void someTask( void );
 /*
  * Starts all the other tasks, then starts the scheduler. Must not have a Cyclic Executive.
  */
-int main( void ) {
+int main( void ) 
+{
 
 	HAL_Init();		//Only HAL_Init() must be called before task creation.
 
@@ -38,7 +39,7 @@ int main( void ) {
 	//
 
 	// Start the task.
-    xTaskCreate( (void *) &someTask, (const signed char *) "SOME", SOMETASK_STACK_SIZE, NULL, SOMETASK_PRIORITY, NULL );
+    	xTaskCreate( (void *) &someTask, (const signed char *) "SOME", SOMETASK_STACK_SIZE, NULL, SOMETASK_PRIORITY, NULL );
 
 	/* Start the scheduler.
 
@@ -56,7 +57,8 @@ int main( void ) {
 /*
  * Some Task.
  */
-void someTask( void ) {
+void someTask( void ) 
+{
 
 	hardware_init();
 
@@ -73,7 +75,8 @@ void someTask( void ) {
 /*
  * Hardware Initialisation - MUST be alled from a task and not in main.
  */
-void hardware_init( void ) {
+void hardware_init( void ) 
+{
 
 	portDISABLE_INTERRUPTS();	//Disable interrupts
 
