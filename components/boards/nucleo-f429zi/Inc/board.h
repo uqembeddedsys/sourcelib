@@ -79,7 +79,7 @@ void BRD_debuguart_putc(unsigned char c);
 unsigned char BRD_debuguart_getc();
 void BRD_debuguart_puts(unsigned char *c);
 void BRD_debuguart_putm(unsigned char *c, int len);
-unsigned char BRD_debuguart_getc();
+unsigned char BRD_debuguart_getc(long unsigned int blocktime);
 
 unsigned char debug_getuc(void);
 /**********************  DEBUG UART ******************************/

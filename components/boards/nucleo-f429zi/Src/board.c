@@ -227,7 +227,7 @@ void BRD_debuguart_putm(unsigned char *c, int len)
 
 
 /* Debug UART getc */
-unsigned char BRD_debuguart_getc(int blocktime) {
+unsigned char BRD_debuguart_getc(long unsigned int blocktime) {
 
 	uint8_t rx_char = '\0';
 	uint32_t prev_tick = 0;
