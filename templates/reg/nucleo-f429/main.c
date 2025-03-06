@@ -52,5 +52,5 @@ void hardware_init(void)
 	BRD_LEDInit();		//Initialise LEDS
 
 	// Turn off LEDs
-	BRD_LEDGreenOn();
+	BRD_LEDGreenOff();
 }
