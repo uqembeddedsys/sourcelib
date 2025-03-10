@@ -10,8 +10,8 @@
   *                  1) Click on "SERIAL MONITOR" and select:
   *                       Port: /dev/ttyACM<x> (For WSL or Linux - e.g. /dev/ttyACM0)
   *                       Port: /dev/tty.us<XXXXXXXX> (OSX only - select the port that starts with /dev/tty.us)
-  *                       "View Mode" must be set to "Text"
-  *                  2) Click "Start Monitoring" and also select "Toggle Terminal Mode" (used for console input)
+  *                  2) "View Mode" must be set to "Text"
+  *                  3) Click "Start Monitoring". Type a letter/number and press <enter> in the box at the bottom of the terminal to send the key value.)
   *
   *          ALTERNATIVE TERMINALS: (Use only if VSCODE is unavailable)
   *          WSL or LINUX: screen /dev/ttyACM<x> 115200 (For WSL or Linux - e.g. screen /dev/ttyACM0 115200)
