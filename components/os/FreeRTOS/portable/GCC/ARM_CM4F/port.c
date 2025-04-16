@@ -123,7 +123,7 @@ void vPortSetupTimerInterrupt( void );
  * Exception handlers.
  */
 void xPortPendSVHandler( void ) __attribute__( ( naked ) );
-void xPortSysTickHandler( void );
+//void xPortSysTickHandler( void );
 void vPortSVCHandler( void ) __attribute__( ( naked ) );
 
 /*

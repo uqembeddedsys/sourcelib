@@ -242,4 +242,7 @@
         }
     #endif
 
+    void xPortSysTickHandler( void );
+
+
 #endif /* PORTMACRO_H */
