@@ -97,7 +97,7 @@ typedef struct
                               This parameter can be a value of @ref GPIO_LL_EC_AF.
 
                               GPIO HW configuration can be modified afterwards using unitary function @ref LL_GPIO_SetAFPin_0_7() and LL_GPIO_SetAFPin_8_15().*/
-} LL_GPIO_InitTypeDef;
+} LL_;
 
 /**
   * @}

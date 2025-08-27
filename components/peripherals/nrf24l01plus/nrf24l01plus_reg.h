@@ -1,9 +1,8 @@
 /* -----------------------------------------------------------------------------
 # Company name: CSSE3010 - Embedded Systems Design & Interfacing
-# Project name: nRF24l01+ driver
-# Module name : nrf24l01plus
-# Functionality: Provides low level radio calls used to initialise and interface
-#        with the nrf24l01+.
+# Project name: nRF24l01+ register
+# Module name : nrf24l01plus register
+# Functionality: Provides register defines for the nrf24l01+.
 #
 # Author name: Chris Rieger modified by MDS
 # Creation date: 010712
@@ -12,125 +11,8 @@
 #(Comments):
 ------------------------------------------------------------------------------*/
 
-#ifndef _nrf24l01plus_H
-#define _nrf24l01plus_H
-
-#ifdef HAVE_PLATFORMCONF_H
-#include "platform-conf.h"
-#endif
-
-
-
-
-/* Define Pins, if not specified by a platform-conf.h file */
-
-/* Mode Pin */
-#ifndef NRF_MODE_PIN
-#define NRF_MODE_PIN		GPIO_PIN_15
-#endif
-
-#ifndef NRF_MODE_GPIO_PORT
-#define NRF_MODE_GPIO_PORT 	GPIOD
-#endif
-
-#ifndef __NRF_MODE_GPIO_CLK
-#define __NRF_MODE_GPIO_CLK 	__GPIOD_CLK_ENABLE()
-#endif
-
-/* SPI CS Pin */
-#ifndef NRF_SPI_CS_PIN
-#define NRF_SPI_CS_PIN	BRD_SPI_RA_CS_PIN
-#endif
-
-#ifndef NRF_SPI_CS_GPIO_PORT
-#define NRF_SPI_CS_GPIO_PORT	BRD_SPI_RA_CS_GPIO_PORT
-#endif
-
-#ifndef __NRF_SPI_CS_GPIO_CLK
-#define __NRF_SPI_CS_GPIO_CLK	__BRD_SPI_RA_CS_GPIO_CLK()
-#endif
-
-
-/* SPI SCK Pin */
-#ifndef NRF_SPI_SCK_PIN
-#define NRF_SPI_SCK_PIN			BRD_SPI_RA_SCK_PIN
-#endif
-
-#ifndef NRF_SPI_SCK_GPIO_PORT
-#define NRF_SPI_SCK_GPIO_PORT	BRD_SPI_RA_SCK_GPIO_PORT
-#endif
-
-#ifndef __NRF_SPI_SCK_GPIO_CLK
-#define __NRF_SPI_SCK_GPIO_CLK()	__BRD_SPI_RA_SCK_GPIO_CLK()
-#endif
-
-#ifndef NRF_SPI_SCK_AF
-#define NRF_SPI_SCK_AF		BRD_SPI_RA_SCK_AF
-#endif
-
-
-/* SPI MISO Pin */
-#ifndef NRF_SPI_MISO_PIN
-#define NRF_SPI_MISO_PIN	BRD_SPI_RA_MISO_PIN
-#endif
-
-#ifndef NRF_SPI_MISO_GPIO_PORT
-#define NRF_SPI_MISO_GPIO_PORT	BRD_SPI_RA_MISO_GPIO_PORT
-#endif
-
-#ifndef __NRF_SPI_MISO_GPIO_CLK
-#define __NRF_SPI_MISO_GPIO_CLK()	__BRD_SPI_RA_MISO_GPIO_CLK()
-#endif
-
-#ifndef NRF_SPI_MISO_AF
-#define NRF_SPI_MISO_AF		BRD_SPI_RA_MISO_AF
-#endif
-
-
-/* SPI MOSI Pin */
-#ifndef NRF_SPI_MOSI_PIN
-#define NRF_SPI_MOSI_PIN	BRD_SPI_RA_MOSI_PIN
-#endif
-
-#ifndef NRF_SPI_MOSI_GPIO_PORT
-#define NRF_SPI_MOSI_GPIO_PORT	BRD_SPI_RA_MOSI_GPIO_PORT
-#endif
-
-#ifndef __NRF_SPI_MOSI_GPIO_CLK
-#define __NRF_SPI_MOSI_GPIO_CLK()	__BRD_SPI_RA_MOSI_GPIO_CLK()
-#endif
-
-#ifndef NRF_SPI_MOSI_AF
-#define NRF_SPI_MOSI_AF		BRD_SPI_RA_MOSI_AF
-#endif
-
-#ifndef NRF_SPI
-#define NRF_SPI	BRD_SPI_RA
-#endif
-
-#ifndef __NRF_SPI_CLK
-#define __NRF_SPI_CLK()	__BRD_SPI_RA_CLK()
-#endif
-
-#ifndef NRF_IRQ_PIN
-#define NRF_IRQ_PIN	BRD_SPI_MOSI_PIN
-#endif
-
-#ifndef NRF_IRQ_GPIO_PORT
-#define NRF_IRQ_GPIO_PORT	BRD_SPI_MOSI_GPIO_PORT
-#endif
-
-
-/* Set/Reset CE pin */
-#define NRF_CE_HIGH()	HAL_GPIO_WritePin(NRF_MODE_GPIO_PORT, NRF_MODE_PIN, 1)
-#define NRF_CE_LOW()	HAL_GPIO_WritePin(NRF_MODE_GPIO_PORT, NRF_MODE_PIN, 0)
-
-/*Set/Reset CS pin */
-#define NRF_CS_HIGH() 	HAL_GPIO_WritePin(NRF_SPI_CS_GPIO_PORT, NRF_SPI_CS_PIN, 1)
-#define NRF_CS_LOW() 	HAL_GPIO_WritePin(NRF_SPI_CS_GPIO_PORT, NRF_SPI_CS_PIN, 0)
-
-
-
+#ifndef _NRF24L01PLUS_REG_H
+#define _NRF24L01PLUS_REG_H
 
 #define NRF24L01P_TX_ADR_WIDTH    5   // 5 unsigned chars TX(RX) address width
 #define NRF24L01P_TX_PLOAD_WIDTH  32  // 32 unsigned chars TX payload
@@ -195,18 +77,5 @@
 #define NRF24L01P_TX_DS    0x20
 #define NRF24L01P_MAX_RT   0x10
 
-void nrf24l01plus_rb(uint8_t reg_addr, uint8_t *buffer, int buffer_len);
-void nrf24l01plus_wb(uint8_t reg_addr, uint8_t *buffer, int buffer_len);
-void nrf24l01plus_init();
-void nrf24l01plus_wr(uint8_t reg_addr, uint8_t val);
-uint8_t nrf24l01plus_rr(uint8_t reg_addr);
-void nrf24l01plus_ce(void);
-void nrf24l01plus_cepin(void);
-int nrf24l01plus_txFifoEmpty(void);
-int nrf24l01plus_rxFifoEmpty(void);
-int nrf24l01plus_recv(uint8_t *rx_buf);
-void nrf24l01plus_send(uint8_t *tx_buf);
-
-int nrf24l01plus_irq_status();
 
 #endif
