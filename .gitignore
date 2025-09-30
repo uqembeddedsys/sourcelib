@@ -17,3 +17,5 @@ build
 # Previous svn files
 *.svn
 *._*
+.DS_Store
+obj
