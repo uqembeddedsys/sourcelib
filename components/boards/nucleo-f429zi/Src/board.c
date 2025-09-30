@@ -185,7 +185,7 @@ void BRD_debuguart_init() {
 }
 
 //Transmit char through debug uart and USB, if enabled
-void BRD_debuguart_putc(unsigned char c)
+__weak void BRD_debuguart_putc(unsigned char c)
 {
 	WRITE_REG(BRD_DEBUG_UART->DR, (unsigned char) c);
 
@@ -227,7 +227,7 @@ void BRD_debuguart_putm(unsigned char *c, int len)
 
 
 /* Debug UART getc */
-unsigned char BRD_debuguart_getc(long unsigned int blocktime) {
+__weak  unsigned char BRD_debuguart_getc(long unsigned int blocktime) {
 
 	uint8_t rx_char = '\0';
 	uint32_t prev_tick = 0;
