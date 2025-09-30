@@ -312,7 +312,7 @@ void nrf24l01plus_hal_rb(uint8_t reg_addr, uint8_t *buffer, int buffer_len) {
   * @param  Transmit buffer
   * @retval None
   */
-void nrf24l01plus_hal_send(uint8_t *tx_buf) {
+__weak void nrf24l01plus_hal_send(uint8_t *tx_buf) {
 
 
 	nrf24l01plus_hal_wr(NRF24L01P_CONFIG, 0x72);     // Set PWR_UP bit, disable CRC(2 unsigned chars) & Prim:TX.
