@@ -75,8 +75,8 @@ void BRD_LEDToggle(uint8_t ledmask);
 #define BRD_DEBUG_UART_RX_GPIO_PORT			GPIOD
 
 void BRD_debuguart_init();
-__weak void BRD_debuguart_putc(unsigned char c);
-__weak unsigned char BRD_debuguart_getc();
+void BRD_debuguart_putc(unsigned char c);
+unsigned char BRD_debuguart_getc();
 void BRD_debuguart_puts(unsigned char *c);
 void BRD_debuguart_putm(unsigned char *c, int len);
 unsigned char BRD_debuguart_getc(long unsigned int blocktime);

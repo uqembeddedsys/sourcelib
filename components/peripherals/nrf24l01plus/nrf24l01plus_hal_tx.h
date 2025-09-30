@@ -138,7 +138,7 @@ void nrf24l01plus_hal_wr(uint8_t reg_addr, uint8_t val);
 uint8_t nrf24l01plus_hal_rr(uint8_t reg_addr);
 void nrf24l01plus_hal_wb(uint8_t reg_addr, uint8_t *buffer, int buffer_len);
 void nrf24l01plus_hal_rb(uint8_t reg_addr, uint8_t *buffer, int buffer_len);
-__weak uint8_t nrf24l01plus_hal_spi_SendRecv_Byte(uint8_t byte);
+uint8_t nrf24l01plus_hal_spi_SendRecv_Byte(uint8_t byte);
 
 /* Transmit Functions */
 void nrf24l01plus_hal_send(uint8_t *tx_buf);
