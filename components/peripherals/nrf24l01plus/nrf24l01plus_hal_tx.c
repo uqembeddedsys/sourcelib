@@ -159,7 +159,7 @@ void nrf24l01plus_hal_init() {
   * @param  Byte to be transmitted.
   * @retval Returns byte received.
   */
-uint8_t nrf24l01plus_hal_spi_SendRecv_Byte(uint8_t byte) {
+__weak uint8_t nrf24l01plus_hal_spi_SendRecv_Byte(uint8_t byte) {
 
 	uint8_t rxbyte;
 	uint8_t rxbyte2;
@@ -312,7 +312,7 @@ void nrf24l01plus_hal_rb(uint8_t reg_addr, uint8_t *buffer, int buffer_len) {
   * @param  Transmit buffer
   * @retval None
   */
-__weak void nrf24l01plus_hal_send(uint8_t *tx_buf) {
+void nrf24l01plus_hal_send(uint8_t *tx_buf) {
 
 
 	nrf24l01plus_hal_wr(NRF24L01P_CONFIG, 0x72);     // Set PWR_UP bit, disable CRC(2 unsigned chars) & Prim:TX.
