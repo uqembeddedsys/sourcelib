@@ -337,7 +337,7 @@ void nrf24l01plus_hal_send(uint8_t *tx_buf) {
   * @param  None
   * @retval Returns 1 if empty else return 0
   */
-int nrf24l01plus_txFifoEmpty(void) {
+int nrf24l01plus_hal_txFifoEmpty(void) {
     unsigned char fifoStatus;
 
     fifoStatus = nrf24l01plus_hal_rr(NRF24L01P_FIFO_STATUS);
