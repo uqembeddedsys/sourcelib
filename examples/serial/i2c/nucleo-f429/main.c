@@ -3,7 +3,7 @@
  * @file    i2c/main.c
  * @author  MDS
  * @date    03042021
- * @brief   I2C example with the MMA8462Q. Reads and checks the WHO_AM_I 
+ * @brief   I2C example with the MMA8452Q. Reads and checks the WHO_AM_I 
  *          register (Address: 0x0D) for the set value (0x2A). If the value is
  *          correct, the green LED is toggled.
  *  		REFERENCE: MMA8462 Datasheet (p15)
